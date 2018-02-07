@@ -17,6 +17,4 @@ package Cases is
       Loyer : Loyers ; -- donne les loyers
       Fonction : Fonction_Case ; -- donne la fonction de la case
       Couleur : Couleur_Case ; -- donne la couleur de la case
-      Occupe : Boolean ; -- vrai si la case est occupée par un joueur, faux sinon
-      Occupant : Positive ; -- donne le numéro du joueur qui occupe la case 
    end record ;
