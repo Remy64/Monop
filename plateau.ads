@@ -1,5 +1,6 @@
 with Cases ;
 use Cases ;
+
 package Plateau is
 
    subtype Numero_Case is Positive in 1..36 ; -- correspond aux numéros des cases de 1 à 36 (car 36 cases)
