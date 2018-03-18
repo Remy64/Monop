@@ -4,8 +4,9 @@ package Joueur is
    type Un_Pion is record
       Compte : Natural ;
       Proprietes : T_Proprietes ;
+      -- ajouter position
    end record ;
-   
-     
-     
+
+
+
 end Joueur ;
