@@ -7,8 +7,8 @@ PACKAGE Cartes IS
       type Un_Effet is (Argent, Prison, Bouger) ; --Effet de la carte
 
       TYPE Une_Carte IS RECORD
-         Titre : String(1..20) ;
-         Description : String(1..100) ;
+         Titre : String(1..20) ; -- ou pointeur
+         Description : String(1..100) ; --idem
          Effet : Un_Effet ;
          Montant : Integer ;
       END RECORD ;
@@ -17,15 +17,15 @@ PACKAGE Cartes IS
 
       TYPE Pile_Carte IS RECORD -- File de cartes
          Tab : T_Cartes ;
-         Deb : Natural ;
-         Fin : Natural ;
+         Prochaine_Carte : Natural ;
+
 
       END RECORD ;
 
 
 
 
-      procedure Piocher_Carte (Pile : in out Pile_Carte; Joueur : Joueur) ;-- Applique l'effet de la carte au sommet de la pile
-      procedure Tomber_Case_Chance(Pile : in out Pile_Carte; Joueur : Joueur) ; --Pioche une carte, applique son effet et la place sous la pile
+      procedure Piocher_Carte (Pile : in out Pile_Carte; Joueur : in out Joueur) ;-- Applique l'effet de la carte au sommet de la pile
+      procedure Tomber_Case_Chance(Pile : in out Pile_Carte; Carte : out Carte) ; --Manipule la pile
 
    end Cartes ;
