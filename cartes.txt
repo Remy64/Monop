@@ -1,0 +1,67 @@
+(0) // Reculez de 3 cases.
+
+(1) Oups ! // Vous êtes libéré de prison. Cette carte peut être conservée jusqu'à ce qu'elle soit utilisée ou vendue.
+
+(2) Un nouveau prof // L'Université vous recrute pour donner un cours, recevez 10 euros.
+
+(3) Les aléas du GMM // Vous avez été convoqué dans le bureau de Loïc Lacouture car vous avez eu un malus en mathématiques. Ne passez pas par la case départ, ne recevez pas 200 euros. 
+
+(4) Les aléas du GEI // Alors que vous vous promenez dans le GEI, attiré par la chaleur des serveurs, vous voyez une salle entrouverte et vous découvrez la joie d'assiter à un cours donné par Michel Castan.Vous rentrez en grave dépression et payez 500M pour le psychiatre.
+
+(5) // Recevez 50 euros de dédommagement pour un logement de médiocre qualité.
+
+(6) // Receve votre revenu annuel de 100 euros. 
+
+(7) // Vous devez renouveler votre matériel, payer 15 euros
+
+(8) // Rendez-vous à l'Avenue Henri-Martin. Si vous passez par la case départ, recevez 200 euros. 
+
+(9) // Vous avez été président du conseil d'administration. Versez 50 eursos à chaque joueur. 
+
+(10) // La Banque vous verse un dividende de 50 euros.
+
+(11) // Vous faites des réparations sur toutes vos propriétés : versez 25 euros, pour chaque maison, et versez 200 euros pour chaque hotel que vous possédez. 
+
+
+(11) // Vous faites des réparations sur toutes vos propriétés : versez 40 euros, pour chaque maison, et versez 115 euros pour chaque hotel que vous possédez.
+
+(12) // Avancez jusqu'à la gare la plus proche. Si elle n'appartient à personne, vous pouvez l'acheter auprès de la Banque. Si elle appartient déjà à un autre joueur, vous devez lui payer deux fois le loyer demandé. 
+
+(13) // Amende pour excès de vitesse : payer 15 euros.
+
+(14) // Rendez-vous à la rue de la paix. 
+
+(15) // Avancez jusqu'à la case départ (recevez 200 euros). 
+
+(16) // Avancez jusqu'à la compagnie de service public la plus proche. Si elle n'appartient à personne, vous pouvez l'acheter auprès de la Banque. Si elle appartient déjà à un autre joueur, lancez les dés et payer le montant du total de vos dés multiplié par 10. 
+
+(17) // Avancez au bouleveard de la villette. Si vous passez par la case départ, recevez 200 euros. 
+
+(18) // Votre immeuble et votre prêt rapportent. Vous devez toucher 150 euros.  
+
+(19) // Allez à la gare montparnasse. Si vous passez par la case départ, recevez 200 euros. 
+
+(20) // Allez en prison. Avancez tout droit en prison. Ne passez pas par la case d"part. Ne recevez pas 200 euros. 
+
+(21) // La vente de votre stock vous rapporte 50 euros. 
+
+(22) // Viste chez le médecin : payez 50 euros. 
+
+(23) // Vous héritez de 100 euros. 
+
+(24) // Votre assurance vie vous rapporte 100 euros. 
+
+(25) // Votre placement vous rapporte. Recevez 100 euros. 
+
+(26) // Frais d'Hospitalisation. Payez 100 euros. 
+
+(27) // Les impôts vous remboursent 20 euros. 
+
+(28) // C'est votre anniversiare : chaque joueur doit vous donner 10 euros. 
+
+(29) // Commission d'expert immobilier. Recevez 25 euros. 
+
+(30) // Frais de scolarité 
+
+
+
