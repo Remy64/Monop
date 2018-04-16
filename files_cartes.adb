@@ -1,8 +1,25 @@
-with Ada.Strings.Unbounded;
+with Ada.Strings.Unbounded, Ada.Numerics.Discrete_Random;
 use Ada.Strings.Unbounded;
 package body Files_Cartes is
    
    function TUS(S : String) return Unbounded_String renames To_Unbounded_String;
+   
+   package Tirage_Aleatoire is new Ada.Numerics.Discrete_Random(Indice_Tab) ;
+   use Tirage_Aleatoire ;
+   
+   Generateur : Generator ;
+   
+   procedure Melanger(F : in out File_Cartes) is
+      Auxi : Une_Carte ;
+      Alea : Indice_Tab ;
+   begin
+      for I in F.Tab'Range loop
+	 Alea := Random(Generateur) ;
+	 Auxi := F.Tab(I) ;
+	 F.Tab(I) := F.Tab(Alea) ;
+	 F.Tab(Alea) := Auxi ;
+      end loop ;
+   end Melanger;
    
    procedure Init(F : in out File_Cartes) is
    begin

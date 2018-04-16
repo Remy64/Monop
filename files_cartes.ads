@@ -8,6 +8,8 @@ package Files_Cartes is
    type Un_Effet is private;
    type Un_Destinataire is private;
    
+   procedure Melanger (F : in out File_Cartes) ;
+   
    procedure Init(F : in out File_Cartes);
    
    procedure Tourner(F : in out File_Cartes ; C : out Une_Carte);
@@ -32,7 +34,7 @@ private
          Titre : Ada.Strings.Unbounded.Unbounded_String;
          Description : Ada.Strings.Unbounded.Unbounded_String;
          Effet : Un_Effet;
-         Montant : Integer; 
+         Montant : Integer;
 	 Destinataire : Un_Destinataire; -- seulement si Effet=Argent
 	                     -- Argent : Montant gagné (négatif si montant perdu)
 	                     -- Prison : 0 sortie prison, 1 entrée prison
@@ -44,8 +46,10 @@ private
    
    type Tab_File is array(Integer range <>) of Une_Carte;
    
+   subtype Indice_Tab is Natural range 0..Nb_Cartes-1;
+   
    type File_Cartes is record
-      Deb : Natural := 0;
+      Deb : Indice_Tab := 0;
       Tab : Tab_File(0..Nb_Cartes-1);
    end record;
    
