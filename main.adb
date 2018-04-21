@@ -5,7 +5,7 @@ procedure Main is
    
    subtype Un_Nb_Joueurs is Positive range 1..6;
    Nb_Joueurs : Un_Nb_Joueurs;
-   Cond1, Cond2, Cond3 : Boolean;
+   Cond, Cond1, Cond2, Cond3 : Boolean;
    
 begin
    
