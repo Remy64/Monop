@@ -1,4 +1,5 @@
-
+with Des_Cases;
+use Des_Cases;
 
 package body Un_Plateau is
    
@@ -50,10 +51,16 @@ package body Un_Plateau is
 			    ) ;
    end Initialiser ;
    
-   P : Plateau ;
+   function Obtenir_Case(N : Un_Num_Rue) return Cases is
+   begin
+      return P(N);
+   end Obtenir_Case;
+   
 begin 
+   
    Initialiser(P) ;
-	    end Un_Plateau ;
+   
+end Un_Plateau ;
 	      
 	      
 	
