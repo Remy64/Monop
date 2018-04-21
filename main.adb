@@ -3,15 +3,18 @@ use Banque, Commerce, Des, Des_Cases, Files_Cartes, Joueur, Liste_Proprietes, Un
 
 procedure Main is
    
-   subtype Un_Nb_Joueurs is Positive range 1..6;
-   Nb_Joueurs : Un_Nb_Joueurs;
-   Cond, Cond1, Cond2, Cond3 : Boolean;
-   
+   Fin_Partie, Cond, Cond1, Cond2, Cond3 : Boolean;
+   Lancer_De : Un_Lancer;
 begin
    
-   while Cond loop
+   while not Fin_Partie loop
       
       for I in Joueurs'Range loop
+	 
+	 Lancer_De := Lancer;
+	 
+	 Joueur
+	 
 	 
          if Cond1 then
 	    null;
