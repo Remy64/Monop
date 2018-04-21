@@ -2,6 +2,11 @@ with Ada.Unchecked.Deallocation;
 
 package body Listes_Proprietes is
    
+   procedure Init_Liste_Proprietes(L : Liste_Proprietes) is
+   begin
+      L := null;
+   end Init_Liste_Proprietes;
+   
    function Possede_Propriete(L : Liste_Proprietes ; C : Numero_Case) return Boolean is
       Trouve : Boolean;
       Aux : Liste_Proprietes;
@@ -25,7 +30,9 @@ package body Listes_Proprietes is
    procedure Supprimer_Propriete(C : in Numero_Case ; L : in out Liste_Proprietes) is
       Aux : Liste_Proprietes;
    begin
-      if L.all.Propriete.Num_Case = C then
+      if L=null then
+	 raise Liste_Proprietes_Vide;
+      elsif L.all.Propriete.Num_Case = C then
 	 Aux := L;
 	 L := L.all.Suiv;
 	 Free(Aux);

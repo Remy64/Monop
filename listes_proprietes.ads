@@ -1,10 +1,14 @@
 package Listes_Proprietes is
    
+   Liste_Proprietes_Vide : exception;
+   
    procedure Free is new Unchecked_Deallocation(Cellule, Liste_Proprietes);
    
    type Liste_Proprietes is private;
    subtype Numero_Case is Positive range 1..36;
    subtype N_Maison is Natural range 0..5;
+   
+   procedure Init_Liste_Proprietes(L : Liste_Proprietes);
    
    function Possede_Propriete(L : Liste_Proprietes ; C : Numero_Case) return Boolean;
    
