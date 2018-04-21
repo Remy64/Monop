@@ -1,5 +1,5 @@
-with Liste_Proprietes;
-use Liste_Proprietes;
+with Liste_Proprietes, Des_Cases, Un_Plateau;
+use Liste_Proprietes, Des_Cases, Un_Plateau;
 
 package body Joueur is
    
@@ -10,6 +10,16 @@ package body Joueur is
 	 Init_Liste_Proprietes(Joueurs(I).Proprietes);
       end loop;
    end Init_Joueurs;
+   
+   function Position_Joueur(N : Un_Num_Joueur) return Un_Num_Rue is
+   begin
+      return Joueurs(N).Position;
+   end Position_Joueur;
+
+   procedure Definir_Position_Joueur(N : Un_Num_Joueur ; P : Un_Num_Rue) is
+   begin
+      Joueurs(N).Position := P;
+   end Definir_Position_Joueur;
    
    function Compte_Joueur(N : Un_Num_Joueur) return Natural is
    begin

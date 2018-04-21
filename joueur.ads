@@ -1,11 +1,12 @@
-with Liste_Proprietes;
-use Liste_Proprietes;
+with Liste_Proprietes, Des_Cases, Un_Plateau;
+use Liste_Proprietes, Des_Cases, Un_Plateau;
 
 package Joueur is
    
-   Nb_Joueurs : Positive := constant 6;
+   Nb_Joueurs : constant Positive := 6;
    
    type Un_Joueur is record
+      Position : Un_Num_Rue;
       Compte : Natural;
       Proprietes : Liste_Proprietes;
    end record;
@@ -17,6 +18,10 @@ package Joueur is
    subtype Un_Num_Joueur is Positive range Joueurs'Range;
    
    procedure Init_Joueurs;
+   
+   function Position_Joueur(N : Un_Num_Joueur) return Un_Num_Rue;
+   
+   procedure Definir_Position_Joueur(N : Un_Num_Joueur ; P : Un_Num_Rue);
    
    function Compte_Joueur(N : Un_Num_Joueur) return Natural;
    
