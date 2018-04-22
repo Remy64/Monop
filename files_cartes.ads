@@ -26,7 +26,7 @@ package Files_Cartes is
    
 private
    
-   type Un_Effet is (Argent, Prison, Bouger, Aller_A); --Effet de la carte
+   type Un_Effet is (Argent, Prison, Bouger, Aller_A, Hotel); --Effet de la carte
    
    type Un_Destinataire is (Banque, Autres_Joueurs, Aucun);
 
@@ -42,7 +42,7 @@ private
 			     -- Aller_A : numéro de la case à atteindre
    end record;
    
-   Nb_Cartes : constant Positive := 30;
+   Nb_Cartes : constant Positive := 32;
    
    type Tab_File is array(Integer range <>) of Une_Carte;
    
