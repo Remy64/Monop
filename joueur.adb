@@ -6,8 +6,10 @@ package body Joueur is
    procedure Init_Joueurs is
    begin
       for I in Joueurs'Range loop
+	 Joueurs(I).Position := 1;
 	 Joueurs(I).Compte := 1500;
 	 Init_Liste_Proprietes(Joueurs(I).Proprietes);
+	 Joueurs(I).Pris := (False, 0, 0);
       end loop;
    end Init_Joueurs;
    
@@ -16,10 +18,10 @@ package body Joueur is
       return Joueurs(N).Position;
    end Position_Joueur;
 
-   procedure Definir_Position_Joueur(N : Un_Num_Joueur ; P : Un_Num_Rue) is
+   procedure Atteindre_Position(N : Un_Num_Joueur ; P : Un_Num_Rue) is
    begin
       Joueurs(N).Position := P;
-   end Definir_Position_Joueur;
+   end Atteindre_Position;
    
    procedure Avancer(N : Un_Num_Joueur ; D : Integer) is
    begin
@@ -40,15 +42,43 @@ package body Joueur is
    begin
       return D>A;
    end Passe_Depart;
-     
-   procedure Gagner_Carte_Lib(N : Un_Num_Joueur) is
+				
+   procedure Mettre_En_Prison(N : Un_Num_Joueur) is
+   begin
+      Joueurs(N).Pris.En_Prison := True;
+   end Mettre_En_Prison;
+
+   procedure Sortir_De_Prison(N : Un_Num_Joueur) is
+   begin
+      Joueurs(N).Pris.En_Prison := False;
+   end Sortir_De_Prison;
+   
+   procedure Incrementer_Tour_Prison(N : Un_Num_Joueur) is
+   begin
+      Joueurs(N).Pris.Nb_Tour_En_Prison := Joueurs(N).Pris.Nb_Tour_En_Prison+1;
+   exception
+      when Constraint_Error =>
+	 raise Trop_De_Tours_En_Prison;
+   end Incrementer_Tour_Prison;
+
+   procedure RAZ_Tour_Prison(N : Un_Num_Joueur) is
+   begin
+      Joueurs(N).Pris.Nb_Tour_En_Prison := 0;
+   end RAZ_Tour_Prison;
+   
+   function Possede_Carte_Lib(N : Un_Num_Joueur) return Boolean is
+   begin
+      return Joueurs(N).Pris.Carte_Libe_Prison /= 0;
+   end Possede_Carte_Lib;
+   
+   procedure Ajouter_Carte_Lib(N : Un_Num_Joueur) is
    begin
       Joueurs(N).Pris.Carte_Libe_Prison := Joueurs(N).Pris.Carte_Libe_Prison+1;
-   end Gagner_Carte_Lib;
+   end Ajouter_Carte_Lib;
    
-   procedure Utiliser_Carte_Lib(N : Un_Num_Joueur) is
+   procedure Retirer_Carte_Lib(N : Un_Num_Joueur) is
    begin
-      Joueurs(N).Pris.En_Prison := False;   
-   end Utiliser_Carte_Lib;
+      Joueurs(N).Pris.Carte_Libe_Prison := Joueurs(N).Pris.Carte_Libe_Prison-1;
+   end Retirer_Carte_Lib;
    
 end Joueur;
