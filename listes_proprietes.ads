@@ -27,10 +27,6 @@ package Listes_Proprietes is
    
    procedure Hypothequer_Desypothequer_Propriete(Hyp : in Boolean; C : in Numero_Case ; L : in out Liste_Proprietes) ;
    
-   
-   
-   
-   
    function Nb_Maisons_Propriete(L : Liste_Proprietes ; C : Numero_Case) return N_Maison;
    
    function N_Case(L : Liste_Proprietes) return Numero_Case ;
@@ -42,6 +38,8 @@ package Listes_Proprietes is
    function Nb_Rues_Meme_Couleur(L : Liste_Proprietes ; Col : Couleur_Case) return Natural ;
    
    function Nb_Compagnies(L : Liste_Proprietes) return Natural ;
+   
+   function Case_Presente(L : Liste_Proprietes ; C : Numero_Case) return Boolean;
 
 private
    type Cellule;
