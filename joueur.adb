@@ -21,6 +21,11 @@ package body Joueur is
       Joueurs(N).Position := P;
    end Definir_Position_Joueur;
    
+   procedure Avancer(N : Un_Num_Joueur ; D : Integer) is
+   begin
+      Joueurs(N).Position := Joueurs(N).Position+D;
+   end Avancer;
+   
    function Compte_Joueur(N : Un_Num_Joueur) return Natural is
    begin
       return Joueurs(N).Compte;
@@ -31,4 +36,19 @@ package body Joueur is
       return Joueurs(N).Proprietes;
    end Proprietes_Joueur;
    
-   end Joueur;
+   function Passe_Depart(D : Un_Num_Rue ; A : Un_Num_Rue) return Boolean is
+   begin
+      return D>A;
+   end Passe_Depart;
+     
+   procedure Gagner_Carte_Lib(N : Un_Num_Joueur) is
+   begin
+      Joueurs(N).Pris.Carte_Libe_Prison := Joueurs(N).Pris.Carte_Libe_Prison+1;
+   end Gagner_Carte_Lib;
+   
+   procedure Utiliser_Carte_Lib(N : Un_Num_Joueur) is
+   begin
+      Joueurs(N).Pris.En_Prison := False;   
+   end Utiliser_Carte_Lib;
+   
+end Joueur;
