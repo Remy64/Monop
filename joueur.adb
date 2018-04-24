@@ -33,6 +33,11 @@ package body Joueur is
       return Joueurs(N).Compte;
    end Compte_Joueur;
    
+   procedure Ajouter_Argent(N : Un_Num_Joueur ; S : Integer) is
+   begin
+      Joueurs(N).Compte := Joueurs(N).Compte+S;
+   end Ajouter_Argent;
+   
    function Proprietes_Joueur(N : Un_Num_Joueur) return Liste_Proprietes is
    begin
       return Joueurs(N).Proprietes;
