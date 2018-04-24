@@ -47,7 +47,12 @@ package body Joueur is
    begin
       return D>A;
    end Passe_Depart;
-				
+   
+   function Est_En_Prison(N : Un_Num_Joueur) return Boolean is
+   begin
+      return Joueurs(N).Pris.En_Prison;
+   end Est_En_Prison;
+   
    procedure Mettre_En_Prison(N : Un_Num_Joueur) is
    begin
       Joueurs(N).Pris.En_Prison := True;

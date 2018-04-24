@@ -27,6 +27,8 @@ package Joueur is
    
    function Passe_Depart(D : Un_Num_Rue ; A : Un_Num_Rue) return Boolean; -- indique à partir de l'ancienne position d'un joueur et de la nouvelle s'il est passé par la case départ
    
+   function Est_En_Prison(N : Un_Num_Joueur) return Boolean; -- renvoie si le joueur est en prison
+   
    procedure Mettre_En_Prison(N : Un_Num_Joueur); -- mets un joueur en prison
    
    procedure Sortir_De_Prison(N : Un_Num_Joueur); -- libère un joueur
