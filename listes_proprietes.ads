@@ -9,17 +9,33 @@ package Listes_Proprietes is
    
    
    
-   subtype N_Maison is Natural range 0..5;
    
    procedure Init_Liste_Proprietes(L : in out Liste_Proprietes) ;
    
-   function Possede_Propriete(L : Liste_Proprietes ; C : Numero_Case) return Boolean;
+   
+   function Est_Vide(L : in Liste_Proprietes) return Boolean ;
+   
+   function Suiv(L : in Liste_Proprietes) return Liste_Proprietes ;
+   
+   function Possede_Propriete(C : in Numero_Case ; L : in Liste_Proprietes) return Boolean;
    
    procedure Ajouter_Propriete(C : in Numero_Case ; L : in out Liste_Proprietes);
    
    procedure Supprimer_Propriete(C : in Numero_Case ; L : in out Liste_Proprietes);
    
+   procedure Ajouter_Enlever_Maison(Aj : in Boolean ; C : in Numero_Case ; L : in out Liste_Proprietes) ;
+   
+   procedure Hypothequer_Desypothequer_Propriete(Hyp : in Boolean; C : in Numero_Case ; L : in out Liste_Proprietes) ;
+   
+   
+   
+   
+   
    function Nb_Maisons_Propriete(L : Liste_Proprietes ; C : Numero_Case) return N_Maison;
+   
+   function N_Case(L : Liste_Proprietes) return Numero_Case ;
+   
+   function Hypo(L : Liste_Proprietes ; C : Numero_Case) return Boolean ;
    
    function Nb_Gares(L : Liste_Proprietes) return Natural ;
    

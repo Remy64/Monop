@@ -1,19 +1,20 @@
-with Ada.Strings.Unbounded;
-use Ada.Strings.Unbounded;
+with Ada.Strings.Unbounded ;
+use Ada.Strings.Unbounded ;
 
 package Files_Cartes is
    
    type File_Cartes is limited private;
    type Une_Carte is private;
-   type Un_Effet is private;
-   type Un_Destinataire is private;
+    type Un_Effet is (Argent, Prison, Bouger, Aller_A, Hotel); --Effet de la carte
+   
+   type Un_Destinataire is (Banque, Autres_Joueurs, Aucun);
    
    procedure Melanger (F : in out File_Cartes) ;
    
    procedure Init(F : in out File_Cartes);
    
    procedure Tourner(F : in out File_Cartes ; C : out Une_Carte);
-   
+  
    function Titre_Carte(C : in Une_Carte) return String;
    
    function Description_Carte(C : in Une_Carte) return String;
@@ -26,9 +27,7 @@ package Files_Cartes is
    
 private
    
-   type Un_Effet is (Argent, Prison, Bouger, Aller_A, Hotel); --Effet de la carte
-   
-   type Un_Destinataire is (Banque, Autres_Joueurs, Aucun);
+  
 
    type Une_Carte is record
          Titre : Ada.Strings.Unbounded.Unbounded_String;

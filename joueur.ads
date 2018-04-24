@@ -5,17 +5,30 @@ package Joueur is
    
    Nb_Joueurs : constant Positive := 6;
    
+   type Prison is record
+      En_Prison : Boolean ;
+      Nb_Tour_En_Prison : Natural ;
+      Carte_Libe_Prison : Natural ;
+      
+      type Un_Joueur is private ;
+      
+      
+      
    type Un_Joueur is record
       Position : Un_Num_Rue;
       Compte : Natural;
       Proprietes : Liste_Proprietes;
+      Pris : Prison ;
+      Libere_De_Prison : Natural ;
    end record;
    
-   type Un_Tab_Joueurs is array 1..Nb_Joueurs of Un_Joueur;
+   subtype Un_Num_Joueur is Positive range 1..Nb_Joueurs ;
+   
+   type Un_Tab_Joueurs is array Un_Num_Joueur of Un_Joueur;
    
    Joueurs : Un_Tab_Joueurs;
    
-   subtype Un_Num_Joueur is Positive range Joueurs'Range;
+   
    
    procedure Init_Joueurs;
    
@@ -26,5 +39,23 @@ package Joueur is
    function Compte_Joueur(N : Un_Num_Joueur) return Natural;
    
    function Proprietes_Joueur(N : Un_Num_Joueur) return Liste_Proprietes;
+   
+   procedure Gagner_Carte_Lib(N : Un_Num_Joueur) ;
+   
+   procedure Utiliser_Carte_Lib(N : Un_Num_Joueur) ;
+   
+   procedure
+      
+   
+   private 
+      
+       type Un_Joueur is record
+      Position : Un_Num_Rue;
+      Compte : Natural;
+      Proprietes : Liste_Proprietes;
+      Pris : Prison ;
+     
+   end record;
+      
    
 end Joueur;
