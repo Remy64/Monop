@@ -33,15 +33,19 @@ package Joueur is
    
    procedure Sortir_De_Prison(N : Un_Num_Joueur); -- libère un joueur
    
+   function Trois_Tours(N : Un_Num_Joueur) return Boolean; -- renvoie si le joueur a passé 3 tours en prison
+   
    procedure Incrementer_Tour_Prison(N : Un_Num_Joueur); -- ajoute un tour au compteur des tours passés en prison d'un joueur
    
    procedure RAZ_Tour_Prison(N : Un_Num_Joueur); -- remets le nombre de tours passés en prison d'un joueur à zéro
    
-   function Possede_Carte_Lib(N : Un_Num_Joueur); -- indique par un booléen si le joueur possède une carte pour se libérer de prison
+   function Possede_Carte_Lib(N : Un_Num_Joueur) return Boolean; -- indique par un booléen si le joueur possède une carte pour se libérer de prison
    
    procedure Ajouter_Carte_Lib(N : Un_Num_Joueur); -- ajoute une carte pour se libérer de prison à un joueur
    
    procedure Retirer_Carte_Lib(N : Un_Num_Joueur); -- retire une carte de libération à un joueur
+   
+   function Proprietaire_Case(C : Numero_Case) return Natural;
       
 private
    

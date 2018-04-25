@@ -63,6 +63,11 @@ package body Joueur is
       Joueurs(N).Pris.En_Prison := False;
    end Sortir_De_Prison;
    
+   function Trois_Tours(N : Un_Num_Joueur) return Boolean is
+   begin
+      return Joueurs(N).Pris.Nb_Tour_En_Prison = 3;
+   end Trois_Tours;
+   
    procedure Incrementer_Tour_Prison(N : Un_Num_Joueur) is
    begin
       Joueurs(N).Pris.Nb_Tour_En_Prison := Joueurs(N).Pris.Nb_Tour_En_Prison+1;
@@ -90,5 +95,22 @@ package body Joueur is
    begin
       Joueurs(N).Pris.Carte_Libe_Prison := Joueurs(N).Pris.Carte_Libe_Prison-1;
    end Retirer_Carte_Lib;
+   
+   function Proprietaire_Case(C : Numero_Case) return Natural is
+      N : Un_Num_Joueur;
+      Trouve : Boolean;
+   begin
+      N := 1;
+      Trouve := False;
+      while N <= Nb_Joueurs and not Trouve loop
+	 Trouve := Case_Presente(Proprietes_Joueur(N), C);
+	 N := N+1;
+      end loop;
+      if Trouve then
+	 return N;
+      else
+	 return 0; -- 0 indique que la case n'est possédée par aucun joueur
+      end if;
+   end Proprietaire_Case;
    
 end Joueur;
