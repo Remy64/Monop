@@ -1,5 +1,5 @@
-with Liste_Proprietes, Des_Cases, Un_Plateau;
-use Liste_Proprietes, Des_Cases, Un_Plateau;
+with Listes_Proprietes, Des_Cases, Un_Plateau;
+use Listes_Proprietes, Des_Cases, Un_Plateau;
 
 package body Joueur is
    
@@ -13,12 +13,12 @@ package body Joueur is
       end loop;
    end Init_Joueurs;
    
-   function Position_Joueur(N : Un_Num_Joueur) return Un_Num_Rue is
+   function Position_Joueur(N : Un_Num_Joueur) return Numero_Case is
    begin
       return Joueurs(N).Position;
    end Position_Joueur;
 
-   procedure Atteindre_Position(N : Un_Num_Joueur ; P : Un_Num_Rue) is
+   procedure Atteindre_Position(N : Un_Num_Joueur ; P : Numero_Case) is
    begin
       Joueurs(N).Position := P;
    end Atteindre_Position;
@@ -38,12 +38,12 @@ package body Joueur is
       Joueurs(N).Compte := Joueurs(N).Compte+S;
    end Ajouter_Argent;
    
-   function Proprietes_Joueur(N : Un_Num_Joueur) return Liste_Proprietes is
+   function Proprietes_Joueur(N : in  Un_Num_Joueur) return Liste_Proprietes is
    begin
       return Joueurs(N).Proprietes;
    end Proprietes_Joueur;
    
-   function Passe_Depart(D : Un_Num_Rue ; A : Un_Num_Rue) return Boolean is
+   function Passe_Depart(D : Numero_Case ; A : Numero_Case) return Boolean is
    begin
       return D>A;
    end Passe_Depart;

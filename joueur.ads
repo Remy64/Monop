@@ -1,5 +1,5 @@
-with Liste_Proprietes, Des_Cases, Un_Plateau;
-use Liste_Proprietes, Des_Cases, Un_Plateau;
+with Listes_Proprietes, Des_Cases, Un_Plateau;
+use Listes_Proprietes, Des_Cases, Un_Plateau;
 
 package Joueur is
          
@@ -13,9 +13,9 @@ package Joueur is
    
    procedure Init_Joueurs; -- place les joueurs sur la case départ dans les conditions d'un début de partie (compte à 1500, pas de propriétés, libre)
    
-   function Position_Joueur(N : Un_Num_Joueur) return Un_Num_Rue; -- renvoie la position d'un joueur
+   function Position_Joueur(N : Un_Num_Joueur) return Numero_Case; -- renvoie la position d'un joueur
    
-   procedure Atteindre_Position(N : Un_Num_Joueur ; P : Un_Num_Rue); -- le joueur atteint la case portant le numéro donné en argument
+   procedure Atteindre_Position(N : Un_Num_Joueur ; P : Numero_Case); -- le joueur atteint la case portant le numéro donné en argument
    
    procedure Avancer(N : Un_Num_Joueur ; D : Integer); -- on donne le nombre de cases dont on se déplace, un nombre négatif signifiant que le joueur recule
    
@@ -23,9 +23,9 @@ package Joueur is
    
    procedure Ajouter_Argent(N : Un_Num_Joueur ; S : Integer); -- renfloue le compte d'un joueur d'une certaine somme, si cette somme est négative alors le joueur perd de l'argent
    
-   function Proprietes_Joueur(N : Un_Num_Joueur) return Liste_Proprietes; -- renvoie la liste des prprietes d'un joueur
+   function Proprietes_Joueur(N : in   Un_Num_Joueur) return Liste_Proprietes; -- renvoie la liste des prprietes d'un joueur
    
-   function Passe_Depart(D : Un_Num_Rue ; A : Un_Num_Rue) return Boolean; -- indique à partir de l'ancienne position d'un joueur et de la nouvelle s'il est passé par la case départ
+   function Passe_Depart(D : Numero_Case ; A : Numero_Case) return Boolean; -- indique à partir de l'ancienne position d'un joueur et de la nouvelle s'il est passé par la case départ
    
    function Est_En_Prison(N : Un_Num_Joueur) return Boolean; -- renvoie si le joueur est en prison
    
@@ -58,13 +58,13 @@ private
    end record;
    
    type Un_Joueur is record
-      Position : Un_Num_Rue;
+      Position : Numero_Case;
       Compte : Natural;
       Proprietes : Liste_Proprietes;
       Pris : Prison;
    end record;
    
-   type Un_Tab_Joueurs is array Un_Num_Joueur of Un_Joueur;
+   type Un_Tab_Joueurs is array (Un_Num_Joueur) of Un_Joueur;
    
    Joueurs : Un_Tab_Joueurs;
    

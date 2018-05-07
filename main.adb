@@ -1,12 +1,11 @@
-with Ada.Text_IO, Banque, Commerce, Des, Des_Cases, Files_Cartes, Joueur, Liste_Proprietes, Un_Plateau;
-use Ada.Text_IO, Banque, Commerce, Des, Des_Cases, Files_Cartes, Joueur, Liste_Proprietes, Un_Plateau;
+with Ada.Text_IO, Des, Des_Cases, Files_Cartes, Joueur, Listes_Proprietes, Un_Plateau;
+use Ada.Text_IO, Des, Des_Cases, Files_Cartes, Joueur, Listes_Proprietes, Un_Plateau;
 
 procedure Main is
    
    Fin_Partie : Boolean; -- grosse condition que l'on défnira probablement à la fin pour terminer la partie
    Ch : Character; -- un enregistreur de caractères auxiliaire utilisé par la procédure Get_Immediate
    Available : Boolean; -- indique si un caractère a été entré au clavier, utilisé par Get_Immediate également
-   Montant : Integer; -- un auxiliaire utile un peu multifonctions
    Lanc : Un_Lancer; -- variable pour enregistrer le lancer des dés
    
    procedure Case_Est_Prison(N : Un_Num_Joueur) is -- action à réaliser quand un joueur tombe sur la case "Aller en prison"
@@ -18,7 +17,10 @@ procedure Main is
       end if;
    end Case_Est_Prison;
    
-   procedure Case_Est_Rue(N : Un_Num_Joueur, C : Numero_Case) is -- algorithme d'Inception aussi appelé de la quadruple imbrication ou tueur de neurones
+   procedure Case_Est_Rue(N : Un_Num_Joueur; C : Numero_Case) is -- algorithme d'Inception aussi appelé de la quadruple imbrication ou tueur de neurones
+      Montant : Natural;
+      Proprio : Natural;
+      L : Liste_Proprietes;
    begin
       Proprio := Proprietaire_Case(C);
       if Proprio = 0 then -- cas où le terrain n'appartient à personne
@@ -27,14 +29,15 @@ procedure Main is
 	 
          Available := False;
 	 
-         while (not Available) and Ch /= o and Ch /= n loop -- demande au joueur d'appuyer sur 'o' ou 'n' pour répondre la question enoncée plus haut
+         while (not Available) and Ch /= 'o' and Ch /= 'n' loop -- demande au joueur d'appuyer sur 'o' ou 'n' pour répondre la question enoncée plus haut
 	    Get_Immediate(Ch, Available);
          end loop;
 	 
-         if Ch = o then
+         if Ch = 'o' then
 	    Ajouter_Argent(N, -Prix_Terrain(Plat(C))); -- retire le montant de l'achat du compte du joueur
-	    Ajouter_Propriete(C, Proprietes_Joueur(N)); -- ajoute une propriété à la liste des propriétés du joueur ciblé
-	 elsif Ch = n then
+	    L := Proprietes_Joueur(N) ;
+	    Ajouter_Propriete(C, L); -- ajoute une propriété à la liste des propriétés du joueur ciblé
+	 elsif Ch = 'n' then
 	    Put("Il faut prendre des risques en affaires ! Demandez conseil à Antoine et montez votre start-up !");
          end if;
 	 
@@ -56,11 +59,92 @@ procedure Main is
       
    end Case_Est_Rue;
    
+   procedure Case_Est_Service(N : Un_Num_Joueur; C : Numero_Case) is
+      
+      Montant : Natural;
+      Proprio : Natural;
+      L : Liste_Proprietes;
+   begin
+      Proprio := Proprietaire_Case(C);
+      if Proprio = 0 then -- cas où le terrain n'appartient à personne
+	 
+	 Put("Voulez-vous acheter " & Nom_Case(Plat(C)) & ", joueur " & Integer'Image(N) & " ?  o/n");
+	 
+         Available := False;
+	 
+         while (not Available) and Ch /= 'o' and Ch /= 'n' loop -- demande au joueur d'appuyer sur 'o' ou 'n' pour répondre la question enoncée plus haut
+	    Get_Immediate(Ch, Available);
+         end loop;
+	 
+         if Ch = 'o' then
+	    Ajouter_Argent(N, -Prix_Terrain(Plat(C))); -- retire le montant de l'achat du compte du joueur
+	    L := Proprietes_Joueur(N) ;
+	    Ajouter_Propriete(C, L); -- ajoute une propriété à la liste des propriétés du joueur ciblé
+	 elsif Ch = 'n' then
+	    Put("Il faut prendre des risques en affaires ! Demandez conseil à Antoine et montez votre start-up !");
+         end if;
+	 
+      elsif Proprio /= N then -- cas où le terrain appartient à un autre joueur
+	 
+	 if Nb_Compagnies(Proprietes_Joueur(Proprio)) = 1 then	    
+	    Montant := Lanc.Des * 4;
+	 elsif Nb_Compagnies(Proprietes_Joueur(Proprio)) = 2 then
+	    Montant := Lanc.Des*10;
+	 end if ;
+	 
+	 Put("Vous devez payer un loyer de " & Integer'Image(Montant) & " au joueur " & Integer'Image(Proprio));
+	 Ajouter_Argent(N, -Loyer(Plat(C), Nb_Maisons_Propriete(Proprietes_Joueur(N), C)));
+	 Ajouter_Argent(Proprio, Loyer(Plat(C), Nb_Maisons_Propriete(Proprietes_Joueur(N), C)));
+	 
+      end if ;
+   end Case_Est_Service ;
+   
+      
+         procedure Case_Est_Gare(N : Un_Num_Joueur; C : Numero_Case) is
+      
+      Montant : Natural;
+      Proprio : Natural;
+      L : Liste_Proprietes;
+   begin
+      Proprio := Proprietaire_Case(C);
+      if Proprio = 0 then -- cas où le terrain n'appartient à personne
+	 
+	 Put("Voulez-vous acheter " & Nom_Case(Plat(C)) & ", joueur " & Integer'Image(N) & " ?  o/n");
+	 
+         Available := False;
+	 
+         while (not Available) and Ch /= 'o' and Ch /= 'n' loop -- demande au joueur d'appuyer sur 'o' ou 'n' pour répondre la question enoncée plus haut
+	    Get_Immediate(Ch, Available);
+         end loop;
+	 
+         if Ch = 'o' then
+	    Ajouter_Argent(N, -Prix_Terrain(Plat(C))); -- retire le montant de l'achat du compte du joueur
+	    L := Proprietes_Joueur(N) ;
+	    Ajouter_Propriete(C, L); -- ajoute une propriété à la liste des propriétés du joueur ciblé
+	 elsif Ch = 'n' then
+	    Put("Il faut prendre des risques en affaires ! Demandez conseil à Antoine et montez votre start-up !");
+         end if;
+	 
+      elsif Proprio /= N then -- cas où le terrain appartient à un autre joueur
+	 
+	 Montant := 25 *2**(Nb_Gares(Proprietes_Joueur(Proprio))-1) ;
+	 
+	 Put("Vous devez payer un loyer de " & Integer'Image(Montant) & " au joueur " & Integer'Image(Proprio));
+	 Ajouter_Argent(N, -Loyer(Plat(C), Nb_Maisons_Propriete(Proprietes_Joueur(N), C)));
+	 Ajouter_Argent(Proprio, Loyer(Plat(C), Nb_Maisons_Propriete(Proprietes_Joueur(N), C)));
+	 
+      end if ;
+      end Case_Est_Gare ;
+      
+	 
+	 
+      
+   
 begin
    
    while not Fin_Partie loop
       
-      for I in Joueurs'Range loop
+      for N in Un_Num_Joueur loop
 	 
 	 Lanc := Lancer;
 	   
@@ -73,15 +157,15 @@ begin
 	   
 	    Put("Voulez-vous payer 50€ pour sortir de prison ? o/n");
 	    
-	    while (not Available) and Ch /= o and Ch /= n loop
+	    while (not Available) and Ch /= 'o' and Ch /= 'n' loop
 	       Get_Immediate(Ch, Available);
             end loop;
       
-            if Ch = o then -- le joueur paie et sort de prison
+            if Ch = 'o' then -- le joueur paie et sort de prison
 	       Ajouter_Argent(N, -50);
 	       Sortir_De_Prison(N);
 	       RAZ_Tour_Prison(N);
-	    elsif Ch = n then -- le joueur ne paie pas et tente un double
+	    elsif Ch = 'n' then -- le joueur ne paie pas et tente un double
 	       if Lanc.Double then
 	          Sortir_De_Prison(N);
 	          RAZ_Tour_Prison(N);
@@ -91,15 +175,15 @@ begin
             end if;
 	    
 	 else
-	    Pos_Prec := Position_Joueur(I);
+	    Pos_Prec := Position_Joueur(N);
 	    Avancer(Lancer);
-	    Pos_Actu := Position_Joueur(I);
+	    
 	 
-	    if Passe_Depart and not Est_En_Prison then -- teste si le joueur est passé par la case départ, s'il est en prison il ne doit pas toucher d'argent
-	       Ajouter_Argent(I, 200);
+	    if Passe_Depart(Pos_Prec, Position_Joueur(N)) and not Est_En_Prison(N) then -- teste si le joueur est passé par la case départ, s'il est en prison il ne doit pas toucher d'argent
+	       Ajouter_Argent(N, 200);
 	    end if;
 	 
-	    case Type_Case(Plat(Position_Joueur(I))) is -- analyse le type de la case sur la quelle le joueur est tombé
+	    case Type_Case(Plat(Position_Joueur(N))) is -- analyse le type de la case sur la quelle le joueur est tombé
 	       when Gare =>
 	          null;
 	       when Service =>
