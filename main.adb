@@ -7,9 +7,11 @@ procedure Main is
    Ch : Character; -- un enregistreur de caractères auxiliaire utilisé par la procédure Get_Immediate
    Available : Boolean; -- indique si un caractère a été entré au clavier, utilisé par Get_Immediate également
    Lanc : Un_Lancer; -- variable pour enregistrer le lancer des dés
+   Cartes_Chance : File_Cartes;
    
    procedure Case_Est_Prison(N : Un_Num_Joueur) is -- action à réaliser quand un joueur tombe sur la case "Aller en prison"
    begin
+      Atteindre_Position(N, 11) ;
       if Possede_Carte_Lib(N) then
 	 Retirer_Carte_Lib(N);
       else
@@ -134,13 +136,97 @@ procedure Main is
 	 Ajouter_Argent(Proprio, Loyer(Plat(C), Nb_Maisons_Propriete(Proprietes_Joueur(N), C)));
 	 
       end if ;
-      end Case_Est_Gare ;
+   end Case_Est_Gare ;
+   
+   procedure Case_Est_Taxe(N : Un_Num_Joueur; C : Numero_Case) is
+      
+   begin
+      
+      Put_Line("Vous devez payer une taxe de"&Natural'Image(Prix_Terrain(Plat(C)))) ;
+      Ajouter_Argent(N, -Prix_Terrain(Plat(C))) ;
+      
+   end Case_Est_Taxe ;
+   
+   procedure Case_Est_Pioche(N : Un_Num_Joueur; C : Numero_Case) is
+      
+      procedure Carte_Argent(Ca : Une_Carte) is
+	 
+      begin
+	 
+	 case Destinataire_Carte(Ca) is
+	    
+	    when Banque => Ajouter_Argent(N, Montant_Carte(Ca)) ;
+	    when Autres_Joueurs => for K in Un_Num_Joueur loop
+	       if K /= N then
+		  Ajouter_Argent(K, -10) ;
+	       else
+		  Ajouter_Argent(K, 10*(Nb_Joueurs-1));
+	       end if;
+	    end loop ;
+	    when Aucun => null ;
+	 end case;
+      end Carte_Argent ;
+      
+      procedure Carte_Hotel(Ca : Une_Carte) is
+	 
+	 L : Liste_Proprietes ;
+	 Nb_Hotels : Natural ;
+	 Nb_Maisons : Natural ;
+	 
+      begin
+	 
+	 L := Proprietes_Joueur(N) ;
+	 Nb_Hotels := 0;
+	 Nb_Maisons := 0;
+	 
+	 while not Est_Vide(L) loop 
+	 
+	 if N_Maisons(L) = 5 then Nb_Hotels := Nb_Hotels +1 ;
+	 else 
+	    Nb_Maisons := Nb_Maisons + N_Maisons(L) ;
+	 end if ;
+	 L := Suiv(L) ;
+	 end loop ;
+	 if Montant_Carte(Ca) = 40 then
+	    Ajouter_Argent(N, -40*Nb_Maisons-110*Nb_Hotels) ;
+	 else
+	    Ajouter_Argent(N, -25*Nb_Maisons-110*Nb_Hotels) ;
+	 end if ;
+      end Carte_Hotel ;
+          
+      Ca : Une_Carte ;
+      
+   begin
+      
+      Tourner(Cartes_Chance, Ca) ;
+      Put_Line(Titre_Carte(Ca)) ;
+      Put_Line(Description_Carte(Ca)) ;
+      
+      case Effet_Carte(Ca) is 
+	 when Argent => Carte_Argent(Ca) ;
+	 when Prison =>  Atteindre_Position(N, 11) ;
+      if Possede_Carte_Lib(N) then
+	 Retirer_Carte_Lib(N);
+      else
+	 Mettre_En_Prison(N);
+      end if; 
+	 when Bouger => Avancer(N, Montant_Carte(Ca)) ;
+	 when Aller_A => Atteindre_Position(N, Montant_Carte(Ca)) ;
+	 when Hotel => Carte_Hotel(Ca) ;
+      end case;
+      
+					   
+            end Case_Est_Pioche ;
+      
       
 	 
 	 
       
    
 begin
+   
+   Init(Cartes_Chance) ;
+   Melanger(Cartes_Chance) ;
    
    while not Fin_Partie loop
       
@@ -185,9 +271,9 @@ begin
 	 
 	    case Type_Case(Plat(Position_Joueur(N))) is -- analyse le type de la case sur la quelle le joueur est tombé
 	       when Gare =>
-	          null;
+	          Case_Est_Gare ;
 	       when Service =>
-	          null;
+	          Case_Est_Service;
 	       when Rue =>
 	          Case_Est_Rue;
 	       when Prison =>
@@ -197,7 +283,7 @@ begin
 	       when Pioche =>
 	          null;
 	       when Taxe =>
-	          null;
+	          Case_Est_Taxe;
 	    end case;
 	    
 	 end if;
