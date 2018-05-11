@@ -4,10 +4,26 @@ use Ada.Text_IO, Des, Des_Cases, Files_Cartes, Joueur, Listes_Proprietes, Un_Pla
 procedure Main is
    
    Fin_Partie : Boolean; -- grosse condition que l'on défnira probablement à la fin pour terminer la partie
-   Ch : Character; -- un enregistreur de caractères auxiliaire utilisé par la procédure Get_Immediate
-   Available : Boolean; -- indique si un caractère a été entré au clavier, utilisé par Get_Immediate également
    Lanc : Un_Lancer; -- variable pour enregistrer le lancer des dés
    Cartes_Chance : File_Cartes;
+   
+   function Choix_Binaire return Boolean is -- fonction qui demande au joueur de répondre par oui ou par non et qui renvoie le résultat sous forme de booléen
+      Available : Boolean; -- indique si un caractère a été entré au clavier, utilisé par Get_Immediate également
+      Ch : Character; -- un enregistreur de caractères auxiliaire utilisé par la procédure Get_Immediate
+   begin
+      Available := False;
+      while (not Available) and then Ch /= 'o' and Ch /= 'n' loop -- demande au joueur d'appuyer sur 'o' ou 'n' pour répondre à la question enoncée plus haut
+	 Get_Immediate(Ch, Available);
+      end loop;
+      return Ch = 'o' ;
+   end Choix_Binaire;
+   
+   procedure Argent_Case_Depart(N : Un_Num_Joueur; Pos_Prec : Numero_Case) is
+   begin
+      if Passe_Depart(Pos_Prec, Position_Joueur(N)) and not Est_En_Prison(N) then -- teste si le joueur est passé par la case départ, s'il est en prison il ne doit pas toucher d'argent
+         Ajouter_Argent(N, 200);
+      end if;
+   end Argent_Case_Depart;
    
    procedure Case_Est_Prison(N : Un_Num_Joueur) is -- action à réaliser quand un joueur tombe sur la case "Aller en prison"
    begin
@@ -29,17 +45,11 @@ procedure Main is
 	 
 	 Put("Voulez-vous acheter " & Nom_Case(Plat(C)) & ", joueur " & Integer'Image(N) & " ?  o/n");
 	 
-         Available := False;
-	 
-         while (not Available) and Ch /= 'o' and Ch /= 'n' loop -- demande au joueur d'appuyer sur 'o' ou 'n' pour répondre la question enoncée plus haut
-	    Get_Immediate(Ch, Available);
-         end loop;
-	 
-         if Ch = 'o' then
+         if Choix_Binaire then
 	    Ajouter_Argent(N, -Prix_Terrain(Plat(C))); -- retire le montant de l'achat du compte du joueur
 	    L := Proprietes_Joueur(N) ;
 	    Ajouter_Propriete(C, L); -- ajoute une propriété à la liste des propriétés du joueur ciblé
-	 elsif Ch = 'n' then
+	 else
 	    Put("Il faut prendre des risques en affaires ! Demandez conseil à Antoine et montez votre start-up !");
          end if;
 	 
@@ -72,17 +82,11 @@ procedure Main is
 	 
 	 Put("Voulez-vous acheter " & Nom_Case(Plat(C)) & ", joueur " & Integer'Image(N) & " ?  o/n");
 	 
-         Available := False;
-	 
-         while (not Available) and Ch /= 'o' and Ch /= 'n' loop -- demande au joueur d'appuyer sur 'o' ou 'n' pour répondre la question enoncée plus haut
-	    Get_Immediate(Ch, Available);
-         end loop;
-	 
-         if Ch = 'o' then
+         if Choix_Binaire then
 	    Ajouter_Argent(N, -Prix_Terrain(Plat(C))); -- retire le montant de l'achat du compte du joueur
 	    L := Proprietes_Joueur(N) ;
 	    Ajouter_Propriete(C, L); -- ajoute une propriété à la liste des propriétés du joueur ciblé
-	 elsif Ch = 'n' then
+	 else
 	    Put("Il faut prendre des risques en affaires ! Demandez conseil à Antoine et montez votre start-up !");
          end if;
 	 
@@ -113,17 +117,11 @@ procedure Main is
 	 
 	 Put("Voulez-vous acheter " & Nom_Case(Plat(C)) & ", joueur " & Integer'Image(N) & " ?  o/n");
 	 
-         Available := False;
-	 
-         while (not Available) and Ch /= 'o' and Ch /= 'n' loop -- demande au joueur d'appuyer sur 'o' ou 'n' pour répondre la question enoncée plus haut
-	    Get_Immediate(Ch, Available);
-         end loop;
-	 
-         if Ch = 'o' then
+         if Choix_Binaire then
 	    Ajouter_Argent(N, -Prix_Terrain(Plat(C))); -- retire le montant de l'achat du compte du joueur
 	    L := Proprietes_Joueur(N) ;
 	    Ajouter_Propriete(C, L); -- ajoute une propriété à la liste des propriétés du joueur ciblé
-	 elsif Ch = 'n' then
+	 else
 	    Put("Il faut prendre des risques en affaires ! Demandez conseil à Antoine et montez votre start-up !");
          end if;
 	 
@@ -134,7 +132,6 @@ procedure Main is
 	 Put("Vous devez payer un loyer de " & Integer'Image(Montant) & " au joueur " & Integer'Image(Proprio));
 	 Ajouter_Argent(N, -Loyer(Plat(C), Nb_Maisons_Propriete(Proprietes_Joueur(N), C)));
 	 Ajouter_Argent(Proprio, Loyer(Plat(C), Nb_Maisons_Propriete(Proprietes_Joueur(N), C)));
-	 
       end if ;
    end Case_Est_Gare ;
    
@@ -149,25 +146,23 @@ procedure Main is
    
    procedure Case_Est_Pioche(N : Un_Num_Joueur; C : Numero_Case) is
       
-      procedure Carte_Argent(Ca : Une_Carte) is
-	 
-      begin
-	 
-	 case Destinataire_Carte(Ca) is
-	    
-	    when Banque => Ajouter_Argent(N, Montant_Carte(Ca)) ;
-	    when Autres_Joueurs => for K in Un_Num_Joueur loop
-	       if K /= N then
-		  Ajouter_Argent(K, -10) ;
-	       else
-		  Ajouter_Argent(K, 10*(Nb_Joueurs-1));
-	       end if;
-	    end loop ;
-	    when Aucun => null ;
+      procedure Carte_Argent(Ca : Une_Carte; N : Un_Num_Joueur) is -- cas où la carte gère de l'argent
+      begin	 
+	 case Destinataire_Carte(Ca) is 
+	    when Banque => Ajouter_Argent(N, Montant_Carte(Ca));
+	    when Autres_Joueurs =>
+	       for K in Un_Num_Joueur loop
+	          if K /= N then
+		     Ajouter_Argent(K, -Montant_Carte(Ca)); 
+	          else
+		     Ajouter_Argent(K, Montant_Carte(Ca)*(Nb_Joueurs-1));
+	          end if;
+	       end loop;
+	    when Aucun => null;
 	 end case;
-      end Carte_Argent ;
+      end Carte_Argent;
       
-      procedure Carte_Hotel(Ca : Une_Carte) is
+      procedure Carte_Hotel(Ca : Une_Carte) is -- je pense qu'on ferait mieux de laisser tomber les cartes hotel et ce genre de subtilité en général
 	 
 	 L : Liste_Proprietes ;
 	 Nb_Hotels : Natural ;
@@ -179,9 +174,9 @@ procedure Main is
 	 Nb_Hotels := 0;
 	 Nb_Maisons := 0;
 	 
-	 while not Est_Vide(L) loop 
+	 while not Est_Vide(L) loop
 	 
-	 if N_Maisons(L) = 5 then Nb_Hotels := Nb_Hotels +1 ;
+	 if N_Maisons(L) = 5 then Nb_Hotels := Nb_Hotels +1 ; -- il faut analyser le nombre de maisons pour chaque case, pas en général. 
 	 else 
 	    Nb_Maisons := Nb_Maisons + N_Maisons(L) ;
 	 end if ;
@@ -203,25 +198,17 @@ procedure Main is
       Put_Line(Description_Carte(Ca)) ;
       
       case Effet_Carte(Ca) is 
-	 when Argent => Carte_Argent(Ca) ;
-	 when Prison =>  Atteindre_Position(N, 11) ;
-      if Possede_Carte_Lib(N) then
-	 Retirer_Carte_Lib(N);
-      else
-	 Mettre_En_Prison(N);
-      end if; 
-	 when Bouger => Avancer(N, Montant_Carte(Ca)) ;
-	 when Aller_A => Atteindre_Position(N, Montant_Carte(Ca)) ;
-	 when Hotel => Carte_Hotel(Ca) ;
-      end case;
+	 when Argent => Carte_Argent(Ca, N);
+	 when Prison => Case_Est_Prison(N); -- c'est la même procédure donc je la réutilise
+	 when Bouger => Avancer(N, Montant_Carte(Ca));
+	 when Aller_A =>
+	    Pos_Prec := Position_Joueur(N);
+	    Atteindre_Position(N, Montant_Carte(Ca));
+	    Argent_Case_Depart(N, Pos_Prec); -- teste si le joueur est passé par la case départ et si oui lui donne son dû
+	 when Hotel => Carte_Hotel(Ca); -- je virerais ça à ta place...
+      end case;	
       
-					   
-            end Case_Est_Pioche ;
-      
-      
-	 
-	 
-      
+   end Case_Est_Pioche ;
    
 begin
    
@@ -263,27 +250,23 @@ begin
 	 else
 	    Pos_Prec := Position_Joueur(N);
 	    Avancer(Lancer);
-	    
-	 
-	    if Passe_Depart(Pos_Prec, Position_Joueur(N)) and not Est_En_Prison(N) then -- teste si le joueur est passé par la case départ, s'il est en prison il ne doit pas toucher d'argent
-	       Ajouter_Argent(N, 200);
-	    end if;
+	    Argent_Case_Depart(N, Pos_Prec);
 	 
 	    case Type_Case(Plat(Position_Joueur(N))) is -- analyse le type de la case sur la quelle le joueur est tombé
 	       when Gare =>
-	          Case_Est_Gare ;
+	          Case_Est_Gare(N, Plat(Position_Joueur(N)));
 	       when Service =>
-	          Case_Est_Service;
+	          Case_Est_Service(N, Plat(Position_Joueur(N)));
 	       when Rue =>
-	          Case_Est_Rue;
+	          Case_Est_Rue(N, Plat(Position_Joueur(N)));
 	       when Prison =>
-	          Case_Est_Prison;
+	          Case_Est_Prison(N, Plat(Position_Joueur(N)));
 	       when Place =>
 	          null;
 	       when Pioche =>
-	          null;
+	          Case_Est_Pioche(N, Plat(Position_Joueur(N)));
 	       when Taxe =>
-	          Case_Est_Taxe;
+	          Case_Est_Taxe(N, Plat(Position_Joueur(N)));
 	    end case;
 	    
 	 end if;
