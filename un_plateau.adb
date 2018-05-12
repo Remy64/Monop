@@ -8,7 +8,7 @@ package body Un_Plateau is
 	    1 => Creer_Case("Depart", 200, 1, (1, 1, 1, 1, 1, 1), Place, (0, 0, 0) ),
 	    2 => Creer_Case("Boulevard de Belleville", 60, 50, (2, 10, 30, 90, 160, 250), Rue, (148, 72, 40) ) ,
 	    3 => Creer_Case("Caisse de Communaute", 1, 1, (1, 1, 1, 1, 1, 1), Pioche, (0, 0, 0) ),
-	    4 =>Creer_Case("Rue Lecourbe", 60, 50, (4, 20, 60, 180, 320, 450), Rue, (168, 72, 40) ) ,
+	    4 =>Creer_Case("Rue Lecourbe", 60, 50, (4, 20, 60, 180, 320, 450), Rue, (148, 72, 40) ) ,
 	    5 => Creer_Case("Impot sur le revenu", 200, 1, (1, 1, 1, 1, 1, 1), Taxe, (0, 0, 0) ),
 	    6 => Creer_Case("Gare Montparnasse", 200, 1, (1, 1, 1, 1, 1, 1), Gare, (0, 0, 0)),
 	    7 => Creer_Case("Rue de Vaugirard", 100, 50, (6, 30, 90, 270, 400, 550), Rue, (186, 228, 250)),
