@@ -210,10 +210,83 @@ procedure Main is
       
    end Case_Est_Pioche ;
    
+   procedure Afficher_Infos_Joueur(N : Un_Num_Joueur) is
+      Joueur_N : constant String := "Joueur " & Integer'Image(N);
+      Num_Ca : Numero_Case := Position_Joueur(N);
+      Ca : Cases := Plat(Num_Ca);
+      
+      function Type_Couleur_Case(Ca : Cases) return String is -- renvoie la fonction de la case ; si c'est une rue, sa couleur
+      begin
+	 case Type_Case(Ca) is
+	    when Gare => return "Gare";
+	    when Service => return "Service";
+	    when Rue =>
+       	       case Couleur(Ca) is
+		  when (148, 72, 40) => return "Marron";
+		  when (186, 228, 250) => return "Bleu Ciel";
+		  when (215, 47, 135) => return "Rose";
+		  when (244, 145, 0) => return "Orange";
+		  when (227, 0, 17) => return "Rouge";
+		  when (253, 237, 2) => return "Jaune";    
+		  when (31, 165, 16) => return "Vert";
+		  when (2, 104, 179) => return "Bleu";
+		  when others => return "Couleur inconnue";
+	       end case;
+	    when Prison => return "Prison";
+	    when Place => return "Place";
+	    when Pioche => return "Pioche";
+	    when Taxe => return "Taxe";
+	 end case;
+      end Type_Couleur_Case;
+      
+      function Inutile(S : Natural) return String is
+      begin
+	 if S = 0 then
+	    return "T'as perdu, non ?";
+	 elsif S < 100 then
+	    return "Achète un manteau et une écharpe, il fait froid dans la rue.";
+	 elsif S < 500 then
+	    return "Tu sais que la banque peut prendre ta maison ?";
+	 elsif S < 1000 then
+	    return "Tu es un mouton de la classe moyenne, oppresseur cis-genre";
+	 elsif S < 2000 then
+	    return "Ça va ? Tranquille ?";
+	 elsif S < 3000 then
+	    return "Et sinon, t'as combien d'hôtels ?";
+	 elsif S < 4000 then
+	    return "Toi, tu vas voir quand on va faire une révolution marxiste-léniniste";
+	 else
+	    return "Prolétaires de tous les pays, unissez-vous !";
+	 end if;	 
+      end Inutile;
+      
+      procedure Afficher_Proprietes(N : Un_Num_Joueur) is
+	 L : Liste_Proprietes := Proprietes_Joueur(N);
+      begin
+	 for I in 1..Nb_Rue loop
+	     if Case_Presente(L, I) then
+		Put_Line("• " & Nom_Case(I) & " : " & Type_Couleur_Case(Plat(I)));
+		Put_Line("   - Hypothéquée : " & Hypo(L, I));
+		if Type_Case(Plat(I)) = Rue then
+		   Put_Line("   - Nombre de maisons : " & Nb_Maisons_Propriete(L, I));
+		end if;
+	     end if;
+	 end loop;
+      end Afficher_Proprietes;
+      
+   begin
+      Put_Line(Joueur_N & " :"); -- numéro
+      Put_Line("Position : " & Num_Ca & ", " & Nom_Case(Ca) & " (" & Type_Couleur_Case(Ca) & ")"); -- position
+      Put_Line("Solde : " & Integer'Image(Compte_Joueur(N)) & " (" & Inutile(Compte_Joueur(N)) & ")"); -- solde
+      Put_Line("En_Prison : " & Boolean'Image(Est_En_Prison(N))); -- prison
+      Afficher_Proprietes(N);
+   end Afficher_Infos_Joueur ;
+   
 begin
    
    Init(Cartes_Chance) ;
    Melanger(Cartes_Chance) ;
+   Init_Joueurs;
    
    while not Fin_Partie loop
       
@@ -229,16 +302,12 @@ begin
 	 if Est_En_Prison(N) then
 	   
 	    Put("Voulez-vous payer 50€ pour sortir de prison ? o/n");
-	    
-	    while (not Available) and Ch /= 'o' and Ch /= 'n' loop
-	       Get_Immediate(Ch, Available);
-            end loop;
       
-            if Ch = 'o' then -- le joueur paie et sort de prison
+            if Choix_Binaire then -- le joueur paie et sort de prison
 	       Ajouter_Argent(N, -50);
 	       Sortir_De_Prison(N);
 	       RAZ_Tour_Prison(N);
-	    elsif Ch = 'n' then -- le joueur ne paie pas et tente un double
+	    else -- le joueur ne paie pas et tente un double
 	       if Lanc.Double then
 	          Sortir_De_Prison(N);
 	          RAZ_Tour_Prison(N);
