@@ -42,6 +42,8 @@ package Listes_Proprietes is
    function Nb_Compagnies(L : Liste_Proprietes) return Natural ;
    
    function Case_Presente(L : Liste_Proprietes ; C : Numero_Case) return Boolean;
+   
+   function Couleur_Complete(L : Liste_Proprietes ; Col : Couleur_Case) return Boolean;
 
 private
    type Cellule;

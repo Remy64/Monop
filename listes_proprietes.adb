@@ -181,4 +181,18 @@ package body Listes_Proprietes is
       return Trouve;
    end Case_Presente;
    
+   function Couleur_Complete(L : Liste_Proprietes ; Col : Couleur_Case) return Boolean is
+      subtype Un_Nb_Rues_Meme_Couleur is Natural range 2..3;
+      N : Un_Nb_Rues_Meme_Couleur;
+   begin
+      N := Nb_Rues_Meme_Couleur(L, Col);
+      if Col = (148, 72, 40) or Col = (2, 104, 179) then
+	 return N=2;
+      elsif Col = (186, 228, 250) or Col = (215, 47, 135) or Col = (244, 145, 0) or Col = (227, 0, 17) or Col = (253, 237, 2) or Col = (31, 165, 16) then
+	 return N=3;
+      else
+         return False;
+      end if;
+   end Couleur_Complete;
+   
 end Listes_Proprietes;
