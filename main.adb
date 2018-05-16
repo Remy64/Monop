@@ -3,19 +3,19 @@ use Ada.Text_IO, Des, Des_Cases, Files_Cartes, Joueur, Listes_Proprietes, Un_Pla
 
 procedure Main is
    
-   Fin_Partie : Boolean; -- grosse condition que l'on défnira probablement à la fin pour terminer la partie
+   
    Lanc : Un_Lancer; -- variable pour enregistrer le lancer des dés
    Cartes_Chance : File_Cartes;
    Pos_Prec :  Numero_Case ;
    
-   function Choix_Binaire return Boolean is -- fonction qui demande au joueur de répondre par oui ou par non et qui renvoie le résultat sous forme de booléen
-      Available : Boolean; -- indique si un caractère a été entré au clavier, utilisé par Get_Immediate également
+   
+   function Choix_Binaire return Boolean is 
       Ch : Character; -- un enregistreur de caractères auxiliaire utilisé par la procédure Get_Immediate
    begin
-      Available := False;
-      Get_Immediate(Ch, Available) ;
-      while (not Available) and then( Ch /= 'o' and Ch /= 'n') loop -- demande au joueur d'appuyer sur 'o' ou 'n' pour répondre à la question enoncée plus haut
-	 Get_Immediate(Ch, Available);
+      
+      Get_Immediate(Ch) ;
+      while ( Ch /= 'o' and Ch /= 'n') loop -- demande au joueur d'appuyer sur 'o' ou 'n' pour répondre à la question enoncée plus haut
+	 Get_Immediate(Ch);
       end loop;
       return Ch = 'o' ;
    end Choix_Binaire;
@@ -26,6 +26,8 @@ procedure Main is
          Ajouter_Argent(N, 200);
       end if;
    end Argent_Case_Depart;
+   
+   
    
    procedure Case_Est_Prison(N : Un_Num_Joueur) is -- action à réaliser quand un joueur tombe sur la case "Aller en prison"
    begin
@@ -43,32 +45,28 @@ procedure Main is
       L : Liste_Proprietes;
    begin
       Proprio := Proprietaire_Case(C);
+      Put_Line("Proprietaire Case : "&Natural'Image(Proprio)) ;
       if Proprio = 0 then -- cas où le terrain n'appartient à personne
 	 
 	 Put("Voulez-vous acheter " & Nom_Case(Plat(C)) & ", joueur " & Integer'Image(N) & " ?  o/n");
 	 
          if Choix_Binaire then
 	    Ajouter_Argent(N, -Prix_Terrain(Plat(C))); -- retire le montant de l'achat du compte du joueur
-	    L := Proprietes_Joueur(N) ;
-	    Ajouter_Propriete(C, L); -- ajoute une propriété à la liste des propriétés du joueur ciblé
+	    
+	    Ajouter_Propriete_Joueur(N, C); -- ajoute une propriété à la liste des propriétés du joueur ciblé
 	 else
 	    Put("Il faut prendre des risques en affaires ! Demandez conseil à Antoine et montez votre start-up !");
          end if;
 	 
       elsif Proprio /= N then -- cas où le terrain appartient à un autre joueur
-	 Montant := Loyer(Plat(C), Nb_Maisons_Propriete(Proprietes_Joueur(N), C));
+	 Montant := Loyer(Plat(C), Nb_Maisons_Propriete(Proprietes_Joueur(Proprio), C));
 	 Put("Vous devez payer un loyer de " & Integer'Image(Montant) & " au joueur " & Integer'Image(Proprio));
-	 Ajouter_Argent(N, -Loyer(Plat(C), Nb_Maisons_Propriete(Proprietes_Joueur(N), C)));
-	 Ajouter_Argent(Proprio, Loyer(Plat(C), Nb_Maisons_Propriete(Proprietes_Joueur(N), C))); -- alors là c'est la merde mais en gros :
-													      -- Proprietes_Joueur(N) renvoie la liste des proprietes du joueur N
-													      -- Nb_Maisons_Proprietes utilise cette liste pour trouver le nombre de maisons possédées par le joueur N sur la case de numéro C ; parce qu'en plus C ça peut être une case ou un numéro de case :(
-													      -- Plat(C) transforme C le numéro en C la case (joie)
-													      -- Loyer de toute cette merde calcule le loyer à partir de la case (et pas du numéro de la case => je veux me pendre) et du nombre de maisons sur la case
-													      -- Sans surprise, Proprietaire_Case(C) renvoie le numéro du joueur qui possède la case (0 si personne ne la possède mais on a déjà traité ce cas)
-													      -- Et mon tout est la mort, enfin... je veux dire que c'est l'action de transférer de l'argent sur le compte de la personne à qui tu payes le loyer donc probablement toi
+	 Ajouter_Argent(N, -Montant);
+	 Ajouter_Argent(Proprio, Montant); 
+													    
       else -- cas où le joueur possède le terrain
 	 null;
-	 -- là il va falloir prendre en compte les couleurs pour voir si on peut construire des maisons ou pas
+	 
       end if;
       
    end Case_Est_Rue;
@@ -77,7 +75,7 @@ procedure Main is
       
       Montant : Natural;
       Proprio : Natural;
-      L : Liste_Proprietes;
+    
    begin
       Proprio := Proprietaire_Case(C);
       if Proprio = 0 then -- cas où le terrain n'appartient à personne
@@ -86,8 +84,8 @@ procedure Main is
 	 
          if Choix_Binaire then
 	    Ajouter_Argent(N, -Prix_Terrain(Plat(C))); -- retire le montant de l'achat du compte du joueur
-	    L := Proprietes_Joueur(N) ;
-	    Ajouter_Propriete(C, L); -- ajoute une propriété à la liste des propriétés du joueur ciblé
+	   
+	   Ajouter_Propriete_Joueur(N, C);
 	 else
 	    Put("Il faut prendre des risques en affaires ! Demandez conseil à Antoine et montez votre start-up !");
          end if;
@@ -101,8 +99,8 @@ procedure Main is
 	 end if ;
 	 
 	 Put("Vous devez payer un loyer de " & Integer'Image(Montant) & " au joueur " & Integer'Image(Proprio));
-	 Ajouter_Argent(N, -Loyer(Plat(C), Nb_Maisons_Propriete(Proprietes_Joueur(N), C)));
-	 Ajouter_Argent(Proprio, Loyer(Plat(C), Nb_Maisons_Propriete(Proprietes_Joueur(N), C)));
+	 Ajouter_Argent(N, -Montant);
+	 Ajouter_Argent(Proprio, Montant);
 	 
       end if ;
    end Case_Est_Service ;
@@ -112,7 +110,7 @@ procedure Main is
       
       Montant : Natural;
       Proprio : Natural;
-      L : Liste_Proprietes;
+     
    begin
       Proprio := Proprietaire_Case(C);
       if Proprio = 0 then -- cas où le terrain n'appartient à personne
@@ -121,19 +119,18 @@ procedure Main is
 	 
          if Choix_Binaire then
 	    Ajouter_Argent(N, -Prix_Terrain(Plat(C))); -- retire le montant de l'achat du compte du joueur
-	    L := Proprietes_Joueur(N) ;
-	    Ajouter_Propriete(C, L); -- ajoute une propriété à la liste des propriétés du joueur ciblé
+	   Ajouter_Propriete_Joueur(N, C); -- ajoute une propriété à la liste des propriétés du joueur ciblé
 	 else
 	    Put("Il faut prendre des risques en affaires ! Demandez conseil à Antoine et montez votre start-up !");
          end if;
 	 
       elsif Proprio /= N then -- cas où le terrain appartient à un autre joueur
 	 
-	 Montant := 25 *2**(Nb_Gares(Proprietes_Joueur(Proprio))-1) ;
+	 Montant := 25 *(2**(Nb_Gares(Proprietes_Joueur(Proprio))-1)) ;
 	 
 	 Put("Vous devez payer un loyer de " & Integer'Image(Montant) & " au joueur " & Integer'Image(Proprio));
-	 Ajouter_Argent(N, -Loyer(Plat(C), Nb_Maisons_Propriete(Proprietes_Joueur(N), C)));
-	 Ajouter_Argent(Proprio, Loyer(Plat(C), Nb_Maisons_Propriete(Proprietes_Joueur(N), C)));
+	 Ajouter_Argent(N, -Montant);
+	 Ajouter_Argent(Proprio, Montant);
       end if ;
    end Case_Est_Gare ;
    
@@ -150,7 +147,7 @@ procedure Main is
       
    begin
       
-       case Type_Case(Plat(Position_Joueur(N))) is -- analyse le type de la case sur la quelle le joueur est tombé
+       case Type_Case(Plat(C)) is -- analyse le type de la case sur la quelle le joueur est tombé
 	       when Gare =>
 	          Case_Est_Gare(N,C) ;
 	       when Service =>
@@ -231,9 +228,9 @@ procedure Main is
 	    Avancer(N, Montant_Carte(Ca));
 	    Argent_Case_Depart(N, Pos_Prec) ;
 	      if Type_Case(Plat(Position_Joueur(N))) = Pioche then
-	       Case_Est_Pioche(N,C) ;
+	       Case_Est_Pioche(N,Position_Joueur(N)) ;
 	    else
-	       Tomb_Case_Incomplete(N,C) ;
+	       Tomb_Case_Incomplete(N,Position_Joueur(N)) ;
 	    end if ;
 	 when Aller_A =>
 	    Pos_Prec := Position_Joueur(N);
@@ -241,9 +238,9 @@ procedure Main is
 	    Argent_Case_Depart(N, Pos_Prec);
 	    
 	      if Type_Case(Plat(Position_Joueur(N))) = Pioche then
-	       Case_Est_Pioche(N,C) ;
+	       Case_Est_Pioche(N,Position_Joueur(N)) ;
 	    else
-	       Tomb_Case_Incomplete(N,C) ;
+	       Tomb_Case_Incomplete(N,Position_Joueur(N)) ;
 	    end if ;
 	 when Hotel => Carte_Hotel(Ca); -- je virerais ça à ta place...
       end case;	
@@ -255,9 +252,9 @@ procedure Main is
       begin
       
       if Type_Case(Plat(Position_Joueur(N))) = Pioche then
-	       Case_Est_Pioche(N,C) ;
+	       Case_Est_Pioche(N,Position_Joueur(N)) ;
 	    else
-	       Tomb_Case_Incomplete(N,C) ;
+	       Tomb_Case_Incomplete(N,Position_Joueur(N)) ;
       end if ;
       
       end Tomber_Case ;
@@ -319,17 +316,36 @@ procedure Main is
       Afficher_Proprietes(N);
    end Afficher_Infos_Joueur ;
    
+   procedure Afficher_Plateau is
+   begin
+      for I in 1..Nb_Rue loop
+	 Put("Case" & Integer'Image(I) & " :");
+	 for N in Un_Num_Joueur loop
+	    if Position_Joueur(N)=I then
+	       Put(" " & Integer'Image(N));
+	    end if;
+	
+	 end loop;
+	 New_Line;
+      end loop;
+   end Afficher_Plateau;
+   
+   
+   
 begin
    
    Init(Cartes_Chance) ;
    Melanger(Cartes_Chance) ;
    Init_Joueurs;
    
-   while not Fin_Partie loop
+   
+   while not Fin_Jeu loop
       
       for N in Un_Num_Joueur loop
 	 
 	 Lanc := Lancer;
+	 New_Line ;	 
+	 Afficher_Infos_Joueur(N);
 	   
 	 if Trois_Tours(N) then -- on vérifie que le joueur n'a pas passé 3 tours en prison, sinon on le sort de prison
 	    Sortir_De_Prison(N);
@@ -355,6 +371,26 @@ begin
             end if;
 	    
 	 else
+	    
+	    
+	    --  L := Proprietes_Joueur(N);
+	    --  while not Est_Vide(L) loop
+	    --     C := N_Case(L) ;
+	    --     if Type_Case(Plat(C)) = Rue and then Couleur_Complete(L, Couleur(Plat(C))) then
+	    --  	  Put_Line("Voulez-vous construire une maison à " & Nom_Case(Plat(C)) & " ?");
+	    --  	  if Choix_Binaire then
+	    --  	     Ajouter_Enlever_Maison(True, C, L);
+	    --  	  else
+	    --  	     Put_Line("Voulez-vous détruire une maison à " & Nom_Case(Plat(C)) & " ?");
+	    --  	     if Choix_Binaire then
+	    --  		Ajouter_Enlever_Maison(False, C, L);
+	    --  	     end if;
+	    --  	  end if;
+	    --     end if;
+	    --     L := Suiv(L) ;
+            --  end loop;
+
+	    
 	    Pos_Prec := Position_Joueur(N);
 	    Avancer(N, Lancer.Des);
 	    Argent_Case_Depart(N, Pos_Prec);
