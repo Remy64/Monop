@@ -1,0 +1,12 @@
+   procedure Afficher_Plateau is
+   begin
+      for I in 1..Nb_Rue loop
+	 Put("Case" & Integer'Image(I) & " :");
+	 for N in Un_Num_Joueur loop
+	    if Position_Joueur(N)=I then
+	       Put(" " & Integer'Image(N));
+	    end if;
+	 end loop;
+	 New_Line;
+      end loop;
+   end Afficher_Plateau;
