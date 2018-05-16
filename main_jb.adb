@@ -13,15 +13,19 @@ procedure Main is
    procedure Afficher_Plateau is
       S : String(1..40);
    begin
+      S := (others => " ");
       for I in 1..Nb_Rue loop
-	 S(I) := '0';
+	 S(3*I) := '0';
 	 for N in Un_Num_Joueur loop
 	    if Position_Joueur(N)=I then
-	       S(I) := Integer'Image(N)(0);
+	       S(3*I) := Integer'Image(N)(0);
 	    end if;
 	 end loop;
       end loop;
-      Put_Line(S);
+      Put_Line("  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20");
+      Put_Line(S(1..20));
+      Put_Line(" 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40");
+      Put_Line(S(21..40));
    end Afficher_Plateau;
    
    function Choix_Binaire return Boolean is -- fonction qui demande au joueur de répondre par oui ou par non et qui renvoie le résultat sous forme de booléen
