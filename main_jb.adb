@@ -10,6 +10,20 @@ procedure Main is
    L : Liste_Proprietes;
    C : Numero_Case;
    
+   procedure Afficher_Plateau is
+      S : String(1..40);
+   begin
+      for I in 1..Nb_Rue loop
+	 S(I) := '0';
+	 for N in Un_Num_Joueur loop
+	    if Position_Joueur(N)=I then
+	       S(I) := Integer'Image(N)(0);
+	    end if;
+	 end loop;
+      end loop;
+      Put_Line(S);
+   end Afficher_Plateau;
+   
    function Choix_Binaire return Boolean is -- fonction qui demande au joueur de répondre par oui ou par non et qui renvoie le résultat sous forme de booléen
       Available : Boolean; -- indique si un caractère a été entré au clavier, utilisé par Get_Immediate également
       Ch : Character; -- un enregistreur de caractères auxiliaire utilisé par la procédure Get_Immediate
