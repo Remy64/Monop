@@ -12,7 +12,7 @@ procedure Main is
       Ch : Character; -- un enregistreur de caractères auxiliaire utilisé par la procédure Get_Immediate
    begin
       Available := False;
-      while (not Available) and then Ch /= 'o' and Ch /= 'n' loop -- demande au joueur d'appuyer sur 'o' ou 'n' pour répondre à la question enoncée plus haut
+      while (not Available) and then (Ch /= 'o' and Ch /= 'n') loop -- demande au joueur d'appuyer sur 'o' ou 'n' pour répondre à la question enoncée plus haut
 	 Get_Immediate(Ch, Available);
       end loop;
       return Ch = 'o' ;
@@ -144,6 +144,29 @@ procedure Main is
       
    end Case_Est_Taxe ;
    
+      procedure Tomb_Case_Incomplete(N : Un_Num_Joueur; C : Numero_Case) is
+      
+   begin
+      
+       case Type_Case(Plat(Position_Joueur(N))) is -- analyse le type de la case sur la quelle le joueur est tombé
+	       when Gare =>
+	          Case_Est_Gare(N,C) ;
+	       when Service =>
+	          Case_Est_Service(N, C);
+	       when Rue =>
+	          Case_Est_Rue(N,C);
+	       when Prison =>
+	          Case_Est_Prison(N);
+	       when Place =>
+	          null;
+	       when Pioche =>
+	          null;
+	       when Taxe =>
+	          Case_Est_Taxe(N,C);
+       end case;
+       
+       end Tomb_Case_Incomplete ;
+   
    procedure Case_Est_Pioche(N : Un_Num_Joueur; C : Numero_Case) is
       
       procedure Carte_Argent(Ca : Une_Carte; N : Un_Num_Joueur) is -- cas où la carte gère de l'argent
@@ -176,8 +199,7 @@ procedure Main is
 	 
 	 while not Est_Vide(L) loop
 	 
-	 if N_Maisons(L) = 5 then Nb_Hotels := Nb_Hotels +1 ; -- il faut analyser le nombre de maisons pour chaque case, pas en général. 
-	 else 
+	 if N_Maisons(L) = 5 then Nb_Hotels := Nb_Hotels +1 ; 
 	    Nb_Maisons := Nb_Maisons + N_Maisons(L) ;
 	 end if ;
 	 L := Suiv(L) ;
@@ -201,14 +223,38 @@ procedure Main is
 	 when Argent => Carte_Argent(Ca, N);
 	 when Prison => Case_Est_Prison(N); -- c'est la même procédure donc je la réutilise
 	 when Bouger => Avancer(N, Montant_Carte(Ca));
+	    if Type_Case(Plat(Position_Joueur(N))) = Pioche then
+	       Case_Est_Pioche(N,C) ;
+	    else
+	       Tomb_Case_Incomplete(N,C) ;
+	    end if ;
 	 when Aller_A =>
 	    Pos_Prec := Position_Joueur(N);
 	    Atteindre_Position(N, Montant_Carte(Ca));
-	    Argent_Case_Depart(N, Pos_Prec); -- teste si le joueur est passé par la case départ et si oui lui donne son dû
+	      Argent_Case_Depart(N, Pos_Prec); -- teste si le joueur est passé par la case départ et si oui lui donne son dû
+	     if Type_Case(Plat(Position_Joueur(N))) = Pioche then
+	       Case_Est_Pioche(N,C) ;
+	    else
+	       Tomb_Case_Incomplete(N,C) ;
+	    end if ;
+	  
 	 when Hotel => Carte_Hotel(Ca); -- je virerais ça à ta place...
       end case;	
       
    end Case_Est_Pioche ;
+   
+   procedure Tomber_Case(N : Un_Num_Joueur ; C : Numero_Case) is
+      
+      begin
+      
+      if Type_Case(Plat(Position_Joueur(N))) = Pioche then
+	       Case_Est_Pioche(N,C) ;
+	    else
+	       Tomb_Case_Incomplete(N,C) ;
+      end if ;
+      
+      end Tomber_Case ;
+      
    
    procedure Afficher_Infos_Joueur(N : Un_Num_Joueur) is
       Joueur_N : constant String := "Joueur " & Integer'Image(N);
@@ -321,22 +367,7 @@ begin
 	    Avancer(Lancer);
 	    Argent_Case_Depart(N, Pos_Prec);
 	 
-	    case Type_Case(Plat(Position_Joueur(N))) is -- analyse le type de la case sur la quelle le joueur est tombé
-	       when Gare =>
-	          Case_Est_Gare(N, Plat(Position_Joueur(N)));
-	       when Service =>
-	          Case_Est_Service(N, Plat(Position_Joueur(N)));
-	       when Rue =>
-	          Case_Est_Rue(N, Plat(Position_Joueur(N)));
-	       when Prison =>
-	          Case_Est_Prison(N, Plat(Position_Joueur(N)));
-	       when Place =>
-	          null;
-	       when Pioche =>
-	          Case_Est_Pioche(N, Plat(Position_Joueur(N)));
-	       when Taxe =>
-	          Case_Est_Taxe(N, Plat(Position_Joueur(N)));
-	    end case;
+	 Tomber_Case(N, C) ;
 	    
 	 end if;
 	 

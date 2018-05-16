@@ -95,6 +95,15 @@ package body Listes_Proprietes is
       return Auxi.all.Propriete.Nb_Maisons;
    end Nb_Maisons_Propriete;
    
+   function N_Maisons(L : Liste_Proprietes) return N_Maison is
+      
+   begin
+      
+      return L.all.Propriete.Nb_Maisons ;
+      
+   end N_Maisons ;
+   
+   
    function N_Case(L : Liste_Proprietes) return Numero_Case is 
    begin
       if L = null then

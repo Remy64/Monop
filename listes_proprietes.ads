@@ -29,6 +29,8 @@ package Listes_Proprietes is
    
    function Nb_Maisons_Propriete(L : Liste_Proprietes ; C : Numero_Case) return N_Maison;
    
+   function N_Maisons(L : Liste_Proprietes) return N_Maison ;
+   
    function N_Case(L : Liste_Proprietes) return Numero_Case ;
    
    function Hypo(L : Liste_Proprietes ; C : Numero_Case) return Boolean ;
