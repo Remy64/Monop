@@ -5,11 +5,15 @@ package Joueur is
          
    type Un_Joueur is private;
    
+   
+   
    Trop_De_Tours_En_Prison : exception;
    
    Nb_Joueurs : constant Positive := 6;
    
    subtype Un_Num_Joueur is Positive range 1..Nb_Joueurs;
+   
+   type Un_Tab_Joueurs is array (Un_Num_Joueur) of Un_Joueur;
    
    procedure Init_Joueurs; -- place les joueurs sur la case départ dans les conditions d'un début de partie (compte à 1500, pas de propriétés, libre)
    
@@ -24,6 +28,8 @@ package Joueur is
    procedure Ajouter_Argent(N : Un_Num_Joueur ; S : Integer); -- renfloue le compte d'un joueur d'une certaine somme, si cette somme est négative alors le joueur perd de l'argent
    
    function Proprietes_Joueur(N : in   Un_Num_Joueur) return Liste_Proprietes; -- renvoie la liste des prprietes d'un joueur
+   
+   procedure Ajouter_Propriete_Joueur(N : in Un_Num_Joueur; C : in Numero_Case);
    
    function Passe_Depart(D : Numero_Case ; A : Numero_Case) return Boolean; -- indique à partir de l'ancienne position d'un joueur et de la nouvelle s'il est passé par la case départ
    
@@ -46,6 +52,12 @@ package Joueur is
    procedure Retirer_Carte_Lib(N : Un_Num_Joueur); -- retire une carte de libération à un joueur
    
    function Proprietaire_Case(C : Numero_Case) return Natural;
+   
+   function Elimine(N : Un_Num_Joueur) return Boolean ;
+   
+   function Nb_Elimines return Natural ;
+   
+   function Fin_Jeu return Boolean ; 
       
 private
    
@@ -62,9 +74,10 @@ private
       Compte : Natural;
       Proprietes : Liste_Proprietes;
       Pris : Prison;
+      Elimine : Boolean ;
    end record;
    
-   type Un_Tab_Joueurs is array (Un_Num_Joueur) of Un_Joueur;
+   
    
    Joueurs : Un_Tab_Joueurs;
    

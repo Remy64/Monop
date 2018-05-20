@@ -1,5 +1,5 @@
-with Listes_Proprietes, Des_Cases, Un_Plateau;
-use Listes_Proprietes, Des_Cases, Un_Plateau;
+with Listes_Proprietes, Des_Cases, Un_Plateau, Ada.Text_IO;
+use Listes_Proprietes, Des_Cases, Un_Plateau, Ada.Text_IO;
 
 package body Joueur is
    
@@ -10,6 +10,7 @@ package body Joueur is
 	 Joueurs(I).Compte := 1500;
 	 Init_Liste_Proprietes(Joueurs(I).Proprietes);
 	 Joueurs(I).Pris := (False, 0, 0);
+	 Joueurs(I).Elimine := False ;
       end loop;
    end Init_Joueurs;
    
@@ -25,8 +26,13 @@ package body Joueur is
    
    procedure Avancer(N : Un_Num_Joueur ; D : Integer) is
    begin
-      Joueurs(N).Position := Joueurs(N).Position+D;
-   end Avancer;
+      if Joueurs(N).Position + D <= 40 then
+	Joueurs(N).Position := (Joueurs(N).Position+D) ;
+      else
+	 Joueurs(N).Position := (Joueurs(N).Position+D) mod Nb_Rue;
+      end if ;
+      
+      end Avancer;
    
    function Compte_Joueur(N : Un_Num_Joueur) return Natural is
    begin
@@ -35,13 +41,27 @@ package body Joueur is
    
    procedure Ajouter_Argent(N : Un_Num_Joueur ; S : Integer) is
    begin
-      Joueurs(N).Compte := Joueurs(N).Compte+S;
+      if Joueurs(N).Compte+S < 0 then
+	 Joueurs(N).Elimine := True ;
+	 Put_Line("LE JOUEUR "&Natural'Image(N)&"EST ELIMINE") ;
+	 else
+	    Joueurs(N).Compte := Joueurs(N).Compte+S;
+      end if ;
+      
    end Ajouter_Argent;
    
    function Proprietes_Joueur(N : in  Un_Num_Joueur) return Liste_Proprietes is
    begin
       return Joueurs(N).Proprietes;
    end Proprietes_Joueur;
+   
+   procedure Ajouter_Propriete_Joueur(N : in Un_Num_Joueur; C : in Numero_Case) is
+  
+   begin
+      
+      Ajouter_Propriete(C, Joueurs(N).Proprietes) ;
+   end Ajouter_Propriete_Joueur ;
+   
    
    function Passe_Depart(D : Numero_Case ; A : Numero_Case) return Boolean is
    begin
@@ -97,20 +117,52 @@ package body Joueur is
    end Retirer_Carte_Lib;
    
    function Proprietaire_Case(C : Numero_Case) return Natural is
-      N : Un_Num_Joueur;
+      N : Natural;
       Trouve : Boolean;
    begin
       N := 1;
       Trouve := False;
       while N <= Nb_Joueurs and not Trouve loop
-	 Trouve := Case_Presente(Proprietes_Joueur(N), C);
+	 Trouve := Possede_Propriete(C, Proprietes_Joueur(N));
 	 N := N+1;
       end loop;
       if Trouve then
-	 return N;
+	 
+	 return N-1;
       else
 	 return 0; -- 0 indique que la case n'est possédée par aucun joueur
       end if;
    end Proprietaire_Case;
    
+   function Elimine(N : Un_Num_Joueur) return Boolean is
+      
+   begin
+      
+      return Joueurs(N).Elimine ;
+   end Elimine ;
+   
+   function Nb_Elimines return Natural is    
+      Compteur : Natural;
+   
+   begin
+      
+      Compteur := 0 ;
+      for I in Joueurs'Range loop 
+	 if Elimine(I) then
+	    Compteur := Compteur + 1 ;
+	 end if ;
+      end loop ;
+      return Compteur ;
+      
+   end Nb_Elimines ;
+   
+   function Fin_Jeu return Boolean is 
+   
+begin
+   
+   return Nb_Elimines = Nb_Joueurs -1 ;
+   
+end Fin_Jeu ;
 end Joueur;
+
+
