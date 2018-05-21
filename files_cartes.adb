@@ -1,5 +1,5 @@
-with Ada.Strings.Unbounded, Ada.Numerics.Discrete_Random;
-use Ada.Strings.Unbounded;
+with Ada.Strings.Unbounded, Ada.Numerics.Discrete_Random, Ada.Text_IO;
+use Ada.Strings.Unbounded, Ada.Text_IO;
 package body Files_Cartes is
    
    function TUS(S : String) return Unbounded_String renames To_Unbounded_String;
@@ -14,7 +14,7 @@ package body Files_Cartes is
       Alea : Indice_Tab ;
    begin
       for I in F.Tab'Range loop
-	 Alea := Random(Generateur) ;
+	 Alea := Random(Generateur) ;	 
 	 Auxi := F.Tab(I) ;
 	 F.Tab(I) := F.Tab(Alea) ;
 	 F.Tab(Alea) := Auxi ;
@@ -87,5 +87,6 @@ package body Files_Cartes is
    begin
       return C.Destinataire;
    end Destinataire_Carte;
-   
+begin
+   Reset(Generateur) ;
 end Files_Cartes;
