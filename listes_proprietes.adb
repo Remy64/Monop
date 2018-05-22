@@ -52,7 +52,7 @@ package body Listes_Proprietes is
       end if;
    end Supprimer_Propriete;
    
-   procedure Ajouter_Enlever_Maison(Aj : Boolean ; C : Numero_Case ; L : in out Liste_Proprietes) is
+   procedure Ajouter_Enlever_Maison(Aj : Boolean ; C : Numero_Case ; L : in Liste_Proprietes) is
       Auxi : Liste_Proprietes;
    begin
       if not Possede_Propriete(C, L) then raise Propriete_Non_Possedee;

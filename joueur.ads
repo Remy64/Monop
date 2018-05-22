@@ -9,7 +9,7 @@ package Joueur is
    
    Trop_De_Tours_En_Prison : exception;
    
-   Nb_Joueurs : constant Positive := 6;
+   Nb_Joueurs : constant Positive := 4;
    
    subtype Un_Num_Joueur is Positive range 1..Nb_Joueurs;
    

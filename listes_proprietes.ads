@@ -23,7 +23,7 @@ package Listes_Proprietes is
    
    procedure Supprimer_Propriete(C : in Numero_Case ; L : in out Liste_Proprietes);
    
-   procedure Ajouter_Enlever_Maison(Aj : in Boolean ; C : in Numero_Case ; L : in out Liste_Proprietes) ;
+   procedure Ajouter_Enlever_Maison(Aj : in Boolean ; C : in Numero_Case ; L : in Liste_Proprietes) ;
    
    procedure Hypothequer_Desypothequer_Propriete(Hyp : in Boolean; C : in Numero_Case ; L : in out Liste_Proprietes) ;
    
