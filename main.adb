@@ -1,5 +1,5 @@
-with Ada.Text_IO, Des, Des_Cases, Files_Cartes, Joueur, Listes_Proprietes, Un_Plateau;
-use Ada.Text_IO, Des, Des_Cases, Files_Cartes, Joueur, Listes_Proprietes, Un_Plateau;
+with Ada.Text_IO, Des, Des_Cases, Files_Cartes, Joueur, Listes_Proprietes, Un_Plateau, Interface_Joueur_Machine;
+use Ada.Text_IO, Des, Des_Cases, Files_Cartes, Joueur, Listes_Proprietes, Un_Plateau, Interface_Joueur_Machine;
 
 procedure Main is
    
@@ -9,16 +9,7 @@ procedure Main is
    Pos_Prec :  Numero_Case ;
    
    
-   function Choix_Binaire return Boolean is 
-      Ch : Character; -- un enregistreur de caractères auxiliaire utilisé par la procédure Get_Immediate
-   begin
-      
-      Get_Immediate(Ch) ;
-      while ( Ch /= 'o' and Ch /= 'n') loop -- demande au joueur d'appuyer sur 'o' ou 'n' pour répondre à la question enoncée plus haut
-	 Get_Immediate(Ch);
-      end loop;
-      return Ch = 'o' ;
-   end Choix_Binaire;
+   
    
    procedure Argent_Case_Depart(N : Un_Num_Joueur; Pos_Prec : Numero_Case) is
    begin
@@ -26,6 +17,139 @@ procedure Main is
          Ajouter_Argent(N, 200);
       end if;
    end Argent_Case_Depart;
+   
+   procedure Hypothequer(N : Un_Num_Joueur; C : Numero_Case) is
+      
+   begin
+      
+      if not Possede_Propriete(C, Proprietes_Joueur(N)) then raise Propriete_Non_Possedee ;
+      else
+	 Hyp(True, N, C) ;
+	 Ajouter_Argent(N, Prix_Terrain(Plat(C))/2);
+      end if ;
+      
+      
+   end Hypothequer ;
+   
+   procedure Deshypothequer(N : Un_Num_Joueur ; C : Numero_Case) is
+      
+   begin
+      
+      if not Possede_Propriete(C, Proprietes_Joueur(N)) then raise Propriete_Non_Possedee ;
+      else
+	 Hyp(False, N, C) ;
+	 Ajouter_Argent(N, Integer(Float((Prix_Terrain(Plat(C))/2))*1.1));
+      end if ;
+   end Deshypothequer ;
+   
+   procedure Construire(N : Un_Num_Joueur ; C : Numero_Case) is
+      
+      function Moins_De_2_Decart return Boolean is
+	 
+	 L : Liste_Proprietes := Proprietes_Joueur(N) ;
+	 Min : Natural ;
+	 
+	 
+      begin
+	 
+	 Min := 5;
+	 
+	 
+	 while not Est_Vide(L) loop
+	    if Couleur(Plat(N_Case(L))) = Couleur(Plat(C)) then
+	       
+	       if Min > N_Maisons(L) then
+		  
+		  Min := N_Maisons(L) ;
+	       end if;
+	      
+	       
+	    end if;
+	    L := Suiv(L) ;
+	 end loop ;
+	 return (Nb_Maisons_Propriete(Proprietes_Joueur(N), C) + 1) - Min < 2 ;
+      end Moins_De_2_Decart;
+      
+      List : Liste_Proprietes ;
+      
+      begin
+      
+
+       if not Possede_Propriete(C, Proprietes_Joueur(N)) then raise Propriete_Non_Possedee ;
+       elsif not Couleur_Complete(Proprietes_Joueur(N), Couleur(Plat(C))) then
+	  Put_Line("Vous n'avez pas la collection complete de cette couleur") ;
+       elsif not Moins_De_2_Decart then
+	  Put_Line("Vous ne pouvez pas construire de maison ici avant d'avoir egaliser le nombre de maison sur les rues de cette couleur") ;
+       elsif Nb_Maisons_Propriete(Proprietes_Joueur(N), C) = 5 then
+	  Put_Line("Vous avez atteint le nombre de maisons maximal") ;
+       else
+	  
+	  List := Proprietes_Joueur(N) ;
+	  Ajouter_Enlever_Maison(True, C, List) ;
+	  Ajouter_Argent(N, -50*((C-1)/10+1)) ;
+	 
+       end if ;
+       
+end Construire ;
+
+procedure Vendre_Maison(N : Un_Num_Joueur; C : Numero_Case) is
+   
+         function Moins_De_2_Decart return Boolean is
+	 
+	 L : Liste_Proprietes := Proprietes_Joueur(N) ;
+	 Max : Natural ;
+	 
+	 
+      begin
+	 
+	 Max := 0;
+	 
+	 
+	 while not Est_Vide(L) loop
+	    if Couleur(Plat(N_Case(L))) = Couleur(Plat(C)) then
+	       
+	       if Max < N_Maisons(L) then
+		  
+		  Max := N_Maisons(L) ;
+	       end if;
+	      
+	       
+	    end if;
+	    L := Suiv(L) ;
+	 end loop ;
+	 return (Max - Nb_Maisons_Propriete(Proprietes_Joueur(N), C) - 1)  < 2 ;
+      end Moins_De_2_Decart;
+      
+      List : Liste_Proprietes ;
+      
+      begin
+      
+
+       if not Possede_Propriete(C, Proprietes_Joueur(N)) then raise Propriete_Non_Possedee ;
+       elsif not Couleur_Complete(Proprietes_Joueur(N), Couleur(Plat(C))) then
+	  Put_Line("Vous n'avez pas la collection complete de cette couleur") ;
+       elsif not Moins_De_2_Decart then
+	  Put_Line("Vous ne pouvez pas vendre de maison ici avant d'avoir egaliser le nombre de maison sur les rues de cette couleur") ;
+       elsif Nb_Maisons_Propriete(Proprietes_Joueur(N), C) = 0 then
+	  Put_Line("Vous n'avez pas de maisons à vendre sur cette propriete");
+       else
+	  
+	  List := Proprietes_Joueur(N) ;
+	  Ajouter_Enlever_Maison(False, C, List) ;
+	  Ajouter_Argent(N, (50*((C-1)/10+1))/2) ;
+	 
+       end if ;
+   
+   end Vendre_Maison ;
+      
+      
+      
+	 
+    
+	    
+      
+      
+   
    
    
    
@@ -260,78 +384,7 @@ procedure Main is
       end Tomber_Case ;
       
    
-   procedure Afficher_Infos_Joueur(N : Un_Num_Joueur) is
-      Joueur_N : constant String := "Joueur " & Integer'Image(N);
-      Num_Ca : Numero_Case := Position_Joueur(N);
-      Ca : Cases := Plat(Num_Ca);
-      
-      function Type_Couleur_Case(Ca : Cases) return String is -- renvoie la fonction de la case ; si c'est une rue, sa couleur
-      begin
-	 case Type_Case(Ca) is
-	    when Gare => return "Gare";
-	    when Service => return "Service";
-	    when Rue =>
-       	         
-		  if Couleur(Ca) = (148, 72, 40) then return "Marron";
-		  elsif Couleur(Ca) = (186, 228, 250) then return "Bleu Ciel";
-		  elsif Couleur(Ca) = (215, 47, 135) then return "Rose";
-		  elsif Couleur(Ca) = (244, 145, 0) then return "Orange";
-		  elsif Couleur(Ca) = (227, 0, 17) then return "Rouge";
-		  elsif Couleur(Ca) = (253, 237, 2) then return "Jaune";    
-		  elsif Couleur(Ca) = (31, 165, 16) then return "Vert";
-		  elsif Couleur(Ca) = (2, 104, 179) then return "Bleu";
-		  else return "Couleur inconnue";
-	       end if;
-	    when Prison => return "Prison";
-	    when Place => return "Place";
-	    when Pioche => return "Pioche";
-	    when Taxe => return "Taxe";
-	 end case;
-      end Type_Couleur_Case;
-      
-      
-      procedure Afficher_Proprietes(N : Un_Num_Joueur) is
-	 L : Liste_Proprietes := Proprietes_Joueur(N);
-	 C : Numero_Case ;
-      begin
-	 while not Est_Vide(L) loop
-	    C := N_Case(L) ;
-	     
-		Put_Line("• " & Nom_Case(Plat(C)) & " : " & Type_Couleur_Case(Plat(C)));
-		if Hypo(L, C) then
-		   Put_Line(" La propriété est hypothéquée");
-		   end if;
-		if Type_Case(Plat(C)) = Rue then
-		   Put_Line("   - Nombre de maisons : " & Integer'Image(Nb_Maisons_Propriete(L, C)));
-		end if;
-	     L := Suiv(L) ;
-	 end loop;
-      end Afficher_Proprietes;
-      
-   begin
-      Put_Line(Joueur_N & " :"); -- numéro
-      Put_Line("Position : " & Integer'Image(Num_Ca) & ", " & Nom_Case(Ca) & " (" & Type_Couleur_Case(Ca) & ")"); -- position
-      Put_Line("Solde : " & Integer'Image(Compte_Joueur(N))) ; -- solde
-      Put_Line("En_Prison : " & Boolean'Image(Est_En_Prison(N))); -- prison
-      Afficher_Proprietes(N);
-   end Afficher_Infos_Joueur ;
-   
-   procedure Afficher_Plateau is
-   begin
-      for I in 1..Nb_Rue loop
-	 Put("Case" & Integer'Image(I) & " :");
-	 for N in Un_Num_Joueur loop
-	    if Position_Joueur(N)=I then
-	       Put(" " & Integer'Image(N));
-	    end if;
-	
-	 end loop;
-	 New_Line;
-      end loop;
-   end Afficher_Plateau;
-   
-   
-   
+ 
 begin
    
    Init(Cartes_Chance) ;

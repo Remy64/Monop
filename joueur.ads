@@ -31,6 +31,8 @@ package Joueur is
    
    procedure Ajouter_Propriete_Joueur(N : in Un_Num_Joueur; C : in Numero_Case);
    
+   procedure Hyp(B : in Boolean ; N : in Un_Num_Joueur; C : in Numero_Case);
+   
    function Passe_Depart(D : Numero_Case ; A : Numero_Case) return Boolean; -- indique à partir de l'ancienne position d'un joueur et de la nouvelle s'il est passé par la case départ
    
    function Est_En_Prison(N : Un_Num_Joueur) return Boolean; -- renvoie si le joueur est en prison

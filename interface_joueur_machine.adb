@@ -71,6 +71,8 @@ package body Interface_Joueur_Machine is
    
    
    procedure Afficher_Plateau is
+      
+      
    begin
       for I in 1..Nb_Rue loop
 	 Put("Case" & Integer'Image(I) & " :");
@@ -83,6 +85,89 @@ package body Interface_Joueur_Machine is
 	 New_Line;
       end loop;
    end Afficher_Plateau;
+   
+   procedure Choix_Menu(A : out Une_Action ; N : in Un_Num_Joueur) is
+      
+      function Une_Collection_Complete(L : Liste_Proprietes) return Boolean is
+	 
+	 Resultat : Boolean ;
+	 
+	 
+      begin
+	 
+	 if Est_Vide(L) then Resultat := False ;
+	 else
+	    Resultat := Couleur_Complete(L, Couleur(Plat(N_Case(L)))) or else Une_Collection_Complete(Suiv(L)) ;
+	    
+	    
+	 end if;
+	 
+	 return Resultat ;
+	 
+      end Une_Collection_Complete ;
+      
+      Saisie_Clavier : Character ;
+      
+      begin
+      
+      if Une_Collection_Complete(Proprietes_Joueur(N)) then
+	 Put_Line("Selectionnez votre action : Hypothequer, Construire une maison, Passer le tour : 'h'/'c'/'p'") ;
+	 Get_Immediate(Saisie_Clavier) ;
+	 if Saisie_Clavier = 'p' then
+	    A := Passer_Tour ;
+	 elsif Saisie_Clavier = 'c' then
+	    A := Construire ;
+	 elsif Saisie_Clavier = 'h' then
+	    A := Hypothequer ;
+	 else
+	    raise Saisie_Invalide ;
+	   
+	 end if ;
+	 
+      elsif not Est_Vide(Proprietes_Joueur(N)) then
+	 Put_Line("Selectionnez votre action : Hypothequer, Passer le tour : 'h'/'p'");
+	 Get_Immediate(Saisie_Clavier) ;
+	 if Saisie_Clavier = 'h' then 
+	    A := Hypothequer ;
+	 elsif Saisie_Clavier = 'p' then
+	    A := Passer_Tour ;
+	 else
+	    raise Saisie_Invalide ;
+	    
+	 end if ;
+	 
+      else
+	 
+	 Put_Line("Confirmez la fin de votre tour : 'p'") ;
+	 Get_Immediate(Saisie_Clavier) ; 
+	 if Saisie_Clavier = 'p' then
+	    A := Passer_Tour ;
+	 else
+	    raise Saisie_Invalide ;
+	    
+	 end if ;
+      end if ;
+      
+	 
+      end Choix_Menu ;
+      
+      procedure Menu_Hypothequer is
+	 
+      begin
+	 
+      end Menu_Hypothequer ;
+      
+      procedure Menu_Construction is
+	 
+      begin
+	 
+      end Menu_Construction ;
+      
+      
+	      
+	   
+
+      
    
    end Interface_Joueur_Machine ;
    

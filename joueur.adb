@@ -27,7 +27,9 @@ package body Joueur is
    procedure Avancer(N : Un_Num_Joueur ; D : Integer) is
    begin
       if Joueurs(N).Position + D <= 40 then
-	Joueurs(N).Position := (Joueurs(N).Position+D) ;
+	 Joueurs(N).Position := (Joueurs(N).Position+D) ;
+      elsif Joueurs(N).Position + D <= 0 then
+	 Joueurs(N).Position := Joueurs(N).Position +D + 40 ;
       else
 	 Joueurs(N).Position := (Joueurs(N).Position+D) mod Nb_Rue;
       end if ;
@@ -61,6 +63,16 @@ package body Joueur is
       
       Ajouter_Propriete(C, Joueurs(N).Proprietes) ;
    end Ajouter_Propriete_Joueur ;
+   
+   procedure Hyp(B : in Boolean ; N : in Un_Num_Joueur; C : in Numero_Case) is
+      
+   begin
+      
+      Hypothequer_Desypothequer_Propriete(B, C, Joueurs(N).Proprietes) ;
+      
+   end Hyp ;
+   
+   
    
    
    function Passe_Depart(D : Numero_Case ; A : Numero_Case) return Boolean is

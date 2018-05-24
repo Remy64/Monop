@@ -52,7 +52,7 @@ package body Listes_Proprietes is
       end if;
    end Supprimer_Propriete;
    
-   procedure Ajouter_Enlever_Maison(Aj : Boolean ; C : Numero_Case ; L : in Liste_Proprietes) is
+   procedure Ajouter_Enlever_Maison(Aj : Boolean ; C : Numero_Case ; L : in  Liste_Proprietes) is
       Auxi : Liste_Proprietes;
    begin
       if not Possede_Propriete(C, L) then raise Propriete_Non_Possedee;
@@ -182,8 +182,8 @@ package body Listes_Proprietes is
    end Case_Presente;
    
    function Couleur_Complete(L : Liste_Proprietes ; Col : Couleur_Case) return Boolean is
-      subtype Un_Nb_Rues_Meme_Couleur is Natural range 2..3;
-      N : Un_Nb_Rues_Meme_Couleur;
+      
+      N : Natural;
    begin
       N := Nb_Rues_Meme_Couleur(L, Col);
       if Col = (148, 72, 40) or Col = (2, 104, 179) then
@@ -191,7 +191,7 @@ package body Listes_Proprietes is
       elsif Col = (186, 228, 250) or Col = (215, 47, 135) or Col = (244, 145, 0) or Col = (227, 0, 17) or Col = (253, 237, 2) or Col = (31, 165, 16) then
 	 return N=3;
       else
-         return False;
+         raise Couleur_Inexistante; Return False;
       end if;
    end Couleur_Complete;
    

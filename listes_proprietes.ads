@@ -4,7 +4,7 @@ use Un_Plateau, Des_Cases ;
 package Listes_Proprietes is
    
    
-   Propriete_Non_Possedee, Liste_Proprietes_Vide : exception ;
+   Propriete_Non_Possedee, Liste_Proprietes_Vide, Couleur_Inexistante : exception ;
    type Liste_Proprietes is private;
    
    
@@ -23,7 +23,7 @@ package Listes_Proprietes is
    
    procedure Supprimer_Propriete(C : in Numero_Case ; L : in out Liste_Proprietes);
    
-   procedure Ajouter_Enlever_Maison(Aj : in Boolean ; C : in Numero_Case ; L : in Liste_Proprietes) ;
+   procedure Ajouter_Enlever_Maison(Aj : in Boolean ; C : in Numero_Case ; L : in  Liste_Proprietes) ;
    
    procedure Hypothequer_Desypothequer_Propriete(Hyp : in Boolean; C : in Numero_Case ; L : in out Liste_Proprietes) ;
    
