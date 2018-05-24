@@ -1,5 +1,5 @@
-with GAda.Graphics, GAda.Advanced_Graphics, Un_Plateau, Des_Cases, Joueur, Listes_Proprietes;
-use GAda.Graphics, GAda.Advanced_Graphics, Un_Plateau, Des_Cases, Joueur, Listes_Proprietes;
+with Ada.Numerics.Elementary_Functions, GAda.Graphics, GAda.Advanced_Graphics, Un_Plateau, Des_Cases, Joueur, Listes_Proprietes;
+use Ada.Numerics.Elementary_Functions, GAda.Graphics, GAda.Advanced_Graphics, Un_Plateau, Des_Cases, Joueur, Listes_Proprietes;
 
 package body Afficher is
    
@@ -149,6 +149,32 @@ package body Afficher is
    	 end loop;
       end loop;
    end Actualiser_Plateau;
+   
+   function Choix_Binaire(M : String) return Boolean is
+      E : T_Event;
+      X_1, X_2, Y, R : Natural;
+   begin
+      X_1 := 5*Cote_Plat/13;
+      X_2 := 6*Cote_Plat/13;
+      Y := 16*Cote_Plat/26;
+      R := 20;
+      
+      Put_Text(X_1, Y + Cote_Plat/26, M, 10);
+      Disque(X_1, Y, R, (255, 0, 0));
+      Disque(X_2, Y, R, (0, 255, 0));
+      
+      E := Next_Event ;
+      while not (E.Trouve and E.Etype=Button_Press and (Sqrt(Float(((abs(E.X-X_1))**2)+((abs(E.Y-Y))**2)))<Float(R) or Sqrt(Float(((abs(E.X-X_2))**2)+((abs(E.Y-Y))**2)))<Float(R))) loop
+         E := Next_Event ;
+      end loop ;
+      
+      return Sqrt(Float(((abs(E.X-X_2))**2)+((abs(E.Y-Y))**2)))<Float(R);
+   end Choix_Binaire;
+   
+   procedure Afficher_Texte(X, Y : Natural; M : String) is
+   begin
+      Put_Text(X, Y, M, 10);
+   end Afficher_Texte;
    
 begin
    

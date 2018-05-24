@@ -21,13 +21,15 @@ begin
    Ajouter_Enlever_Maison(True, 7, Proprietes_Joueur(2));
    Ajouter_Enlever_Maison(True, 4, Proprietes_Joueur(1));
    
-   delay 5.0;
+   delay 3.0;
    Actualiser_Plateau;
    
    Ajouter_Propriete_Joueur(3, 38);
    Ajouter_Enlever_Maison(True, 7, Proprietes_Joueur(2));
    
-   delay 5.0;
+   delay 3.0;
    Actualiser_Plateau;
+   
+   Afficher_Texte(5*Cote_Plat/13, 9*Cote_Plat/13, Boolean'Image(Choix_Binaire("Voilà.")));
    
 end Test_Afficher;

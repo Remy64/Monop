@@ -18,4 +18,8 @@ package Afficher is
    
    procedure Actualiser_Plateau;
    
+   function Choix_Binaire(M : String) return Boolean;
+   
+   procedure Afficher_Texte(X, Y : Natural; M : String);
+   
 end Afficher;
