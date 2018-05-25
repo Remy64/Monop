@@ -26,15 +26,15 @@ package body Joueur is
    
    procedure Avancer(N : Un_Num_Joueur ; D : Integer) is
    begin
-      if Joueurs(N).Position + D <= 40 then
-	 Joueurs(N).Position := (Joueurs(N).Position+D) ;
-      elsif Joueurs(N).Position + D <= 0 then
+      if Joueurs(N).Position + D <= 0 then
 	 Joueurs(N).Position := Joueurs(N).Position +D + 40 ;
+      elsif Joueurs(N).Position + D <= 40 then
+	 Joueurs(N).Position := (Joueurs(N).Position+D) ;
       else
 	 Joueurs(N).Position := (Joueurs(N).Position+D) mod Nb_Rue;
       end if ;
       
-      end Avancer;
+   end Avancer;
    
    function Compte_Joueur(N : Un_Num_Joueur) return Natural is
    begin
