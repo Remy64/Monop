@@ -154,13 +154,13 @@ package body Interface_Joueur_Machine is
       procedure Menu_Hypothequer is
 	 
       begin
-	 
+	 null;
       end Menu_Hypothequer ;
       
       procedure Menu_Construction is
 	 
       begin
-	 
+	 null;
       end Menu_Construction ;
       
       

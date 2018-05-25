@@ -88,6 +88,7 @@ package body Joueur is
    procedure Mettre_En_Prison(N : Un_Num_Joueur) is
    begin
       Joueurs(N).Pris.En_Prison := True;
+      Atteindre_Position(N, 11) ;
    end Mettre_En_Prison;
 
    procedure Sortir_De_Prison(N : Un_Num_Joueur) is

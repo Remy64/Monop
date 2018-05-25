@@ -45,25 +45,15 @@ procedure Main is
    procedure Construire(N : Un_Num_Joueur ; C : Numero_Case) is
       
       function Moins_De_2_Decart return Boolean is
-	 
 	 L : Liste_Proprietes := Proprietes_Joueur(N) ;
 	 Min : Natural ;
-	 
-	 
       begin
-	 
 	 Min := 5;
-	 
-	 
 	 while not Est_Vide(L) loop
 	    if Couleur(Plat(N_Case(L))) = Couleur(Plat(C)) then
-	       
 	       if Min > N_Maisons(L) then
-		  
 		  Min := N_Maisons(L) ;
 	       end if;
-	      
-	       
 	    end if;
 	    L := Suiv(L) ;
 	 end loop ;
@@ -72,29 +62,29 @@ procedure Main is
       
       List : Liste_Proprietes ;
       
-      begin
+   begin
       
 
-       if not Possede_Propriete(C, Proprietes_Joueur(N)) then raise Propriete_Non_Possedee ;
-       elsif not Couleur_Complete(Proprietes_Joueur(N), Couleur(Plat(C))) then
-	  Put_Line("Vous n'avez pas la collection complete de cette couleur") ;
-       elsif not Moins_De_2_Decart then
-	  Put_Line("Vous ne pouvez pas construire de maison ici avant d'avoir egaliser le nombre de maison sur les rues de cette couleur") ;
-       elsif Nb_Maisons_Propriete(Proprietes_Joueur(N), C) = 5 then
-	  Put_Line("Vous avez atteint le nombre de maisons maximal") ;
-       else
-	  
-	  List := Proprietes_Joueur(N) ;
-	  Ajouter_Enlever_Maison(True, C, List) ;
-	  Ajouter_Argent(N, -50*((C-1)/10+1)) ;
+      if not Possede_Propriete(C, Proprietes_Joueur(N)) then raise Propriete_Non_Possedee ;
+      elsif not Couleur_Complete(Proprietes_Joueur(N), Couleur(Plat(C))) then
+	 Put_Line("Vous n'avez pas la collection complete de cette couleur") ;
+      elsif not Moins_De_2_Decart then
+	 Put_Line("Vous ne pouvez pas construire de maison ici avant d'avoir egaliser le nombre de maison sur les rues de cette couleur") ;
+      elsif Nb_Maisons_Propriete(Proprietes_Joueur(N), C) = 5 then
+	 Put_Line("Vous avez atteint le nombre de maisons maximal") ;
+      else
 	 
-       end if ;
-       
-end Construire ;
+	 List := Proprietes_Joueur(N) ;
+	 Ajouter_Enlever_Maison(True, C, List) ;
+	 Ajouter_Argent(N, -50*((C-1)/10+1)) ;
+	 
+      end if ;
+      
+   end Construire ;
 
-procedure Vendre_Maison(N : Un_Num_Joueur; C : Numero_Case) is
-   
-         function Moins_De_2_Decart return Boolean is
+   procedure Vendre_Maison(N : Un_Num_Joueur; C : Numero_Case) is
+      
+      function Moins_De_2_Decart return Boolean is
 	 
 	 L : Liste_Proprietes := Proprietes_Joueur(N) ;
 	 Max : Natural ;
@@ -112,7 +102,7 @@ procedure Vendre_Maison(N : Un_Num_Joueur; C : Numero_Case) is
 		  
 		  Max := N_Maisons(L) ;
 	       end if;
-	      
+	       
 	       
 	    end if;
 	    L := Suiv(L) ;
@@ -122,40 +112,39 @@ procedure Vendre_Maison(N : Un_Num_Joueur; C : Numero_Case) is
       
       List : Liste_Proprietes ;
       
-      begin
+   begin
       
 
-       if not Possede_Propriete(C, Proprietes_Joueur(N)) then raise Propriete_Non_Possedee ;
-       elsif not Couleur_Complete(Proprietes_Joueur(N), Couleur(Plat(C))) then
-	  Put_Line("Vous n'avez pas la collection complete de cette couleur") ;
-       elsif not Moins_De_2_Decart then
-	  Put_Line("Vous ne pouvez pas vendre de maison ici avant d'avoir egaliser le nombre de maison sur les rues de cette couleur") ;
-       elsif Nb_Maisons_Propriete(Proprietes_Joueur(N), C) = 0 then
-	  Put_Line("Vous n'avez pas de maisons à vendre sur cette propriete");
-       else
-	  
-	  List := Proprietes_Joueur(N) ;
-	  Ajouter_Enlever_Maison(False, C, List) ;
-	  Ajouter_Argent(N, (50*((C-1)/10+1))/2) ;
+      if not Possede_Propriete(C, Proprietes_Joueur(N)) then raise Propriete_Non_Possedee ;
+      elsif not Couleur_Complete(Proprietes_Joueur(N), Couleur(Plat(C))) then
+	 Put_Line("Vous n'avez pas la collection complete de cette couleur") ;
+      elsif not Moins_De_2_Decart then
+	 Put_Line("Vous ne pouvez pas vendre de maison ici avant d'avoir egaliser le nombre de maison sur les rues de cette couleur") ;
+      elsif Nb_Maisons_Propriete(Proprietes_Joueur(N), C) = 0 then
+	 Put_Line("Vous n'avez pas de maisons à vendre sur cette propriete");
+      else
 	 
-       end if ;
-   
+	 List := Proprietes_Joueur(N) ;
+	 Ajouter_Enlever_Maison(False, C, List) ;
+	 Ajouter_Argent(N, (50*((C-1)/10+1))/2) ;
+	 
+      end if ;
+      
    end Vendre_Maison ;
-      
-      
-      
-	 
-    
-	    
-      
-      
+   
+   
+   
+   
+   
+   
+   
+   
    
    
    
    
    procedure Case_Est_Prison(N : Un_Num_Joueur) is -- action à réaliser quand un joueur tombe sur la case "Aller en prison"
    begin
-      Atteindre_Position(N, 11) ;
       if Possede_Carte_Lib(N) then
 	 Retirer_Carte_Lib(N);
       else
@@ -187,7 +176,7 @@ procedure Vendre_Maison(N : Un_Num_Joueur; C : Numero_Case) is
 	 Put("Vous devez payer un loyer de " & Integer'Image(Montant) & " au joueur " & Integer'Image(Proprio));
 	 Ajouter_Argent(N, -Montant);
 	 Ajouter_Argent(Proprio, Montant); 
-													    
+	 
       else -- cas où le joueur possède le terrain
 	 null;
 	 
@@ -199,7 +188,7 @@ procedure Vendre_Maison(N : Un_Num_Joueur; C : Numero_Case) is
       
       Montant : Natural;
       Proprio : Natural;
-    
+      
    begin
       Proprio := Proprietaire_Case(C);
       if Proprio = 0 then -- cas où le terrain n'appartient à personne
@@ -208,8 +197,8 @@ procedure Vendre_Maison(N : Un_Num_Joueur; C : Numero_Case) is
 	 
          if Choix_Binaire then
 	    Ajouter_Argent(N, -Prix_Terrain(Plat(C))); -- retire le montant de l'achat du compte du joueur
-	   
-	   Ajouter_Propriete_Joueur(N, C);
+	    
+	    Ajouter_Propriete_Joueur(N, C);
 	 else
 	    Put("Il faut prendre des risques en affaires ! Demandez conseil à Antoine et montez votre start-up !");
          end if;
@@ -229,12 +218,12 @@ procedure Vendre_Maison(N : Un_Num_Joueur; C : Numero_Case) is
       end if ;
    end Case_Est_Service ;
    
-      
-         procedure Case_Est_Gare(N : Un_Num_Joueur; C : Numero_Case) is
+   
+   procedure Case_Est_Gare(N : Un_Num_Joueur; C : Numero_Case) is
       
       Montant : Natural;
       Proprio : Natural;
-     
+      
    begin
       Proprio := Proprietaire_Case(C);
       if Proprio = 0 then -- cas où le terrain n'appartient à personne
@@ -243,7 +232,7 @@ procedure Vendre_Maison(N : Un_Num_Joueur; C : Numero_Case) is
 	 
          if Choix_Binaire then
 	    Ajouter_Argent(N, -Prix_Terrain(Plat(C))); -- retire le montant de l'achat du compte du joueur
-	   Ajouter_Propriete_Joueur(N, C); -- ajoute une propriété à la liste des propriétés du joueur ciblé
+	    Ajouter_Propriete_Joueur(N, C); -- ajoute une propriété à la liste des propriétés du joueur ciblé
 	 else
 	    Put("Il faut prendre des risques en affaires ! Demandez conseil à Antoine et montez votre start-up !");
          end if;
@@ -267,28 +256,28 @@ procedure Vendre_Maison(N : Un_Num_Joueur; C : Numero_Case) is
       
    end Case_Est_Taxe ;
    
-     procedure Tomb_Case_Incomplete(N : Un_Num_Joueur; C : Numero_Case) is
+   procedure Tomb_Case_Incomplete(N : Un_Num_Joueur; C : Numero_Case) is
       
    begin
       
-       case Type_Case(Plat(C)) is -- analyse le type de la case sur la quelle le joueur est tombé
-	       when Gare =>
-	          Case_Est_Gare(N,C) ;
-	       when Service =>
-	          Case_Est_Service(N, C);
-	       when Rue =>
-	          Case_Est_Rue(N,C);
-	       when Prison =>
-	          Case_Est_Prison(N);
-	       when Place =>
-	          null;
-	       when Pioche =>
-	          null;
-	       when Taxe =>
-	          Case_Est_Taxe(N,C);
-       end case;
-       
-       end Tomb_Case_Incomplete ;
+      case Type_Case(Plat(C)) is -- analyse le type de la case sur la quelle le joueur est tombé
+	 when Gare =>
+	    Case_Est_Gare(N,C) ;
+	 when Service =>
+	    Case_Est_Service(N, C);
+	 when Rue =>
+	    Case_Est_Rue(N,C);
+	 when Prison =>
+	    Case_Est_Prison(N);
+	 when Place =>
+	    null;
+	 when Pioche =>
+	    null;
+	 when Taxe =>
+	    Case_Est_Taxe(N,C);
+      end case;
+      
+   end Tomb_Case_Incomplete ;
    
    procedure Case_Est_Pioche(N : Un_Num_Joueur; C : Numero_Case) is
       
@@ -321,12 +310,12 @@ procedure Vendre_Maison(N : Un_Num_Joueur; C : Numero_Case) is
 	 Nb_Maisons := 0;
 	 
 	 while not Est_Vide(L) loop
-	 
-	 if N_Maisons(L) = 5 then Nb_Hotels := Nb_Hotels +1 ;  
-	 else 
-	    Nb_Maisons := Nb_Maisons + N_Maisons(L) ;
-	 end if ;
-	 L := Suiv(L) ;
+	    
+	    if N_Maisons(L) = 5 then Nb_Hotels := Nb_Hotels +1 ;  
+	    else 
+	       Nb_Maisons := Nb_Maisons + N_Maisons(L) ;
+	    end if ;
+	    L := Suiv(L) ;
 	 end loop ;
 	 if Montant_Carte(Ca) = 40 then
 	    Ajouter_Argent(N, -40*Nb_Maisons-110*Nb_Hotels) ;
@@ -334,7 +323,7 @@ procedure Vendre_Maison(N : Un_Num_Joueur; C : Numero_Case) is
 	    Ajouter_Argent(N, -25*Nb_Maisons-110*Nb_Hotels) ;
 	 end if ;
       end Carte_Hotel ;
-          
+      
       Ca : Une_Carte ;
       
       Pos_Prec : Numero_Case ;
@@ -351,7 +340,7 @@ procedure Vendre_Maison(N : Un_Num_Joueur; C : Numero_Case) is
 	 when Bouger => Pos_Prec := Position_Joueur(N) ;
 	    Avancer(N, Montant_Carte(Ca));
 	    Argent_Case_Depart(N, Pos_Prec) ;
-	      if Type_Case(Plat(Position_Joueur(N))) = Pioche then
+	    if Type_Case(Plat(Position_Joueur(N))) = Pioche then
 	       Case_Est_Pioche(N,Position_Joueur(N)) ;
 	    else
 	       Tomb_Case_Incomplete(N,Position_Joueur(N)) ;
@@ -361,7 +350,7 @@ procedure Vendre_Maison(N : Un_Num_Joueur; C : Numero_Case) is
 	    Atteindre_Position(N, Montant_Carte(Ca));
 	    Argent_Case_Depart(N, Pos_Prec);
 	    
-	      if Type_Case(Plat(Position_Joueur(N))) = Pioche then
+	    if Type_Case(Plat(Position_Joueur(N))) = Pioche then
 	       Case_Est_Pioche(N,Position_Joueur(N)) ;
 	    else
 	       Tomb_Case_Incomplete(N,Position_Joueur(N)) ;
@@ -371,20 +360,20 @@ procedure Vendre_Maison(N : Un_Num_Joueur; C : Numero_Case) is
       
    end Case_Est_Pioche ;
    
-      procedure Tomber_Case(N : Un_Num_Joueur ; C : Numero_Case) is
+   procedure Tomber_Case(N : Un_Num_Joueur ; C : Numero_Case) is
       
-      begin
+   begin
       
       if Type_Case(Plat(Position_Joueur(N))) = Pioche then
-	       Case_Est_Pioche(N,Position_Joueur(N)) ;
-	    else
-	       Tomb_Case_Incomplete(N,Position_Joueur(N)) ;
+	 Case_Est_Pioche(N,Position_Joueur(N)) ;
+      else
+	 Tomb_Case_Incomplete(N,Position_Joueur(N)) ;
       end if ;
       
-      end Tomber_Case ;
-      
+   end Tomber_Case ;
    
- 
+   
+   
 begin
    
    Init(Cartes_Chance) ;
@@ -399,17 +388,16 @@ begin
 	 Lanc := Lancer;
 	 New_Line ;	 
 	 Afficher_Infos_Joueur(N);
-	   
+	 
 	 if Trois_Tours(N) then -- on vérifie que le joueur n'a pas passé 3 tours en prison, sinon on le sort de prison
 	    Sortir_De_Prison(N);
 	    Ajouter_Argent(N, -50) ;
-	   RAZ_Tour_Prison(N);
+	    RAZ_Tour_Prison(N);
 	 end if;
-	   
+	 
 	 if Est_En_Prison(N) then
-	   
+	    
 	    Put("Voulez-vous payer 50€ pour sortir de prison ? o/n");
-      
             if Choix_Binaire then -- le joueur paie et sort de prison
 	       Ajouter_Argent(N, -50);
 	       Sortir_De_Prison(N);
@@ -449,7 +437,7 @@ begin
 	    Argent_Case_Depart(N, Pos_Prec);
 	    
 	    Tomber_Case(N, Position_Joueur(N)) ; 
-	 
+	    
 
 	 end if;
 	 
