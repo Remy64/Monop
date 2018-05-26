@@ -12,13 +12,7 @@ package body Interface_Joueur_Machine is
       return Ch = 'o' ;
    end Choix_Binaire;
    
-   
-      procedure Afficher_Infos_Joueur(N : Un_Num_Joueur) is
-      Joueur_N : constant String := "Joueur " & Integer'Image(N);
-      Num_Ca : Numero_Case := Position_Joueur(N);
-      Ca : Cases := Plat(Num_Ca);
-      
-      function Type_Couleur_Case(Ca : Cases) return String is -- renvoie la fonction de la case ; si c'est une rue, sa couleur
+    function Type_Couleur_Case(Ca : Cases) return String is -- renvoie la fonction de la case ; si c'est une rue, sa couleur
       begin
 	 case Type_Case(Ca) is
 	    when Gare => return "Gare";
@@ -41,6 +35,14 @@ package body Interface_Joueur_Machine is
 	    when Taxe => return "Taxe";
 	 end case;
       end Type_Couleur_Case;
+   
+   
+      procedure Afficher_Infos_Joueur(N : Un_Num_Joueur) is
+      Joueur_N : constant String := "Joueur " & Integer'Image(N);
+      Num_Ca : Numero_Case := Position_Joueur(N);
+      Ca : Cases := Plat(Num_Ca);
+      
+     
       
       
       procedure Afficher_Proprietes(N : Un_Num_Joueur) is
@@ -96,8 +98,11 @@ package body Interface_Joueur_Machine is
       begin
 	 
 	 if Est_Vide(L) then Resultat := False ;
-	 else
+	 elsif Type_Case(Plat(N_Case(L))) = Rue  then
 	    Resultat := Couleur_Complete(L, Couleur(Plat(N_Case(L)))) or else Une_Collection_Complete(Suiv(L)) ;
+	    
+	 else 
+	    Resultat := Une_Collection_Complete(Suiv(L)) ;
 	    
 	    
 	 end if;
@@ -112,7 +117,9 @@ package body Interface_Joueur_Machine is
       
       if Une_Collection_Complete(Proprietes_Joueur(N)) then
 	 Put_Line("Selectionnez votre action : Hypothequer, Construire une maison, Passer le tour : 'h'/'c'/'p'") ;
+	 Skip_Line ;
 	 Get_Immediate(Saisie_Clavier) ;
+	 
 	 if Saisie_Clavier = 'p' then
 	    A := Passer_Tour ;
 	 elsif Saisie_Clavier = 'c' then
@@ -126,6 +133,7 @@ package body Interface_Joueur_Machine is
 	 
       elsif not Est_Vide(Proprietes_Joueur(N)) then
 	 Put_Line("Selectionnez votre action : Hypothequer, Passer le tour : 'h'/'p'");
+	 Skip_Line ;
 	 Get_Immediate(Saisie_Clavier) ;
 	 if Saisie_Clavier = 'h' then 
 	    A := Hypothequer ;
@@ -139,7 +147,9 @@ package body Interface_Joueur_Machine is
       else
 	 
 	 Put_Line("Confirmez la fin de votre tour : 'p'") ;
+	 Skip_Line ;
 	 Get_Immediate(Saisie_Clavier) ; 
+
 	 if Saisie_Clavier = 'p' then
 	    A := Passer_Tour ;
 	 else
@@ -151,16 +161,116 @@ package body Interface_Joueur_Machine is
 	 
       end Choix_Menu ;
       
-      procedure Menu_Hypothequer is
+      procedure Menu_Hypothequer(N : Un_Num_Joueur; K : out Numero_Case) is
+	 	 
+	 
+	 L : Liste_Proprietes := Proprietes_Joueur(N);
+	 C : Numero_Case ;
 	 
       begin
-	 null;
+	 Put_Line("Liste des proprietes hypothecables : ");
+	 while not Est_Vide(L) loop
+	    C := N_Case(L) ;
+	    if not Hypo(L, C) then 
+	     
+		Put_Line("• " &"Case n°"&Numero_Case'Image(C)& Nom_Case(Plat(C)) & " : " & Type_Couleur_Case(Plat(C)));
+	        
+		if Type_Case(Plat(C)) = Rue then
+		   Put_Line("   - Nombre de maisons : " & Integer'Image(Nb_Maisons_Propriete(L, C)));
+		end if;
+	    end if ;
+	    L := Suiv(L) ;
+	 end loop ;
+	 L := Proprietes_Joueur(N) ;
+	 C := N_Case(L) ;
+	 
+	 New_Line ;
+	 Put_Line("Liste des proprietes hypothequees") ;
+	 
+	 while not Est_Vide(L) loop
+	   
+	   if Hypo(L, C) then 
+	   
+	   Put_Line("• " &"Case n°"&Numero_Case'Image(C)& Nom_Case(Plat(C)) & " : " & Type_Couleur_Case(Plat(C)));
+	   
+	   if Type_Case(Plat(C)) = Rue then
+	      Put_Line("   - Nombre de maisons : " & Integer'Image(Nb_Maisons_Propriete(L, C)));
+	   end if;
+	   end if ;
+	   
+	   L := Suiv(L) ;
+	 end loop; 
+	 New_Line ;
+	 Put_Line("Entrez le numero de la propriete que vous souhaitez hypothequer ou sur laquelle vous souhaitez lever l'hypotheque") ;
+	 
+	 Skip_Line ;
+	 Get(K);   
+	 
+	 
       end Menu_Hypothequer ;
       
-      procedure Menu_Construction is
+      procedure Menu_Construction(N : in Un_Num_Joueur; K : out Numero_Case; B : out Boolean) is
+	 L : Liste_Proprietes ;
+	 C : Numero_Case ;
+	 
+	 
 	 
       begin
-	 null;
+	 L := Proprietes_Joueur(N) ;
+	 
+	 Put_Line("Voulez vous achetez(o) ou vendre(n) une maison ? : o/n");
+	 
+	 B := Choix_Binaire ;
+	 
+	 if B then
+	    
+	    Put_Line("Liste des rues constructibles") ;
+	      while not Est_Vide(L) loop 
+	      
+	      C := N_Case(L) ;
+	      if Type_case(Plat(C)) = Rue and then Couleur_Complete(Proprietes_Joueur(N), Couleur(Plat(C))) and then  Moins_De_2_Decart_Cons(Proprietes_Joueur(N), C) and then N_Maisons(L) < 5 then
+		 
+		 Put_Line("• " &"Case n°"&Numero_Case'Image(C)& Nom_Case(Plat(C)) & " : " & Type_Couleur_Case(Plat(C)));
+		 Put_Line("   - Nombre de maisons : " & Integer'Image(Nb_Maisons_Propriete(L, C)));
+	      end if ;
+	      L := Suiv(L) ;
+	     
+	    end loop ;
+	    
+	    Put_Line("Entrez le numero de la propriété sur laquelle vous souhaitez faire construire") ;
+	    Skip_Line ;
+	    Get(K) ;
+	    
+	    
+	 else
+	    
+	    Put_Line("Liste des rues avec des maisons à vendre :");
+	    
+	    while Not Est_Vide(L) loop
+	       C := N_Case(L) ;
+	        if Type_case(Plat(C)) = Rue and then Couleur_Complete(Proprietes_Joueur(N), Couleur(Plat(C))) and then  Moins_De_2_Decart_Vent(Proprietes_Joueur(N), C) and then N_Maisons(L) > 0 then
+		 
+		 Put_Line("• " &"Case n°"&Numero_Case'Image(C)& Nom_Case(Plat(C)) & " : " & Type_Couleur_Case(Plat(C)));
+		 Put_Line("   - Nombre de maisons : " & Integer'Image(Nb_Maisons_Propriete(L, C)));
+	      end if ;
+	      L := Suiv(L) ;
+	     
+	    end loop ;
+	    
+	    Put_Line("Entrez le numero de la rue sur laquelle vous souhaitez vendre une maison");
+	    Skip_Line ;
+	    Get(K) ;
+	    
+	      
+	    
+	    
+	 end if ;
+	 
+	    
+	    
+	 
+        
+	 
       end Menu_Construction ;
       
       

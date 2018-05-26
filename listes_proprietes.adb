@@ -188,11 +188,55 @@ package body Listes_Proprietes is
       N := Nb_Rues_Meme_Couleur(L, Col);
       if Col = (148, 72, 40) or Col = (2, 104, 179) then
 	 return N=2;
-      elsif Col = (186, 228, 250) or Col = (215, 47, 135) or Col = (244, 145, 0) or Col = (227, 0, 17) or Col = (253, 237, 2) or Col = (31, 165, 16) then
+      elsif Col = (186, 228, 250) or Col = (215, 47, 135) or Col = (244, 145, 0) or Col = (227, 0, 17) or Col = (253, 237, 2) or Col = (31, 165, 76) then
 	 return N=3;
       else
          raise Couleur_Inexistante; Return False;
       end if;
    end Couleur_Complete;
    
+   function Moins_De_2_Decart_Cons(L : Liste_Proprietes; C : Numero_Case) return Boolean is
+      
+      Auxi : Liste_Proprietes := L ;
+      Min : Natural ;
+   begin
+      Min := 5;
+      while not Est_Vide(Auxi) loop
+	 if Couleur(Plat(N_Case(Auxi))) = Couleur(Plat(C)) then
+	    if Min > N_Maisons(Auxi) then
+	       Min := N_Maisons(Auxi) ;
+	    end if;
+	 end if;
+	 Auxi := Suiv(Auxi) ;
+      end loop ;
+      return (Nb_Maisons_Propriete(L, C) + 1) - Min < 2 ;
+   end Moins_De_2_Decart_Cons;
+   
+   function Moins_De_2_Decart_Vent(L : Liste_Proprietes; C : Numero_Case) return Boolean is
+      
+      Auxi : Liste_Proprietes := L ;
+      Max : Natural ;
+      
+      
+   begin
+      
+      Max := 0;
+      
+      
+      while not Est_Vide(Auxi) loop
+	 if Couleur(Plat(N_Case(Auxi))) = Couleur(Plat(C)) then
+	    
+	    if Max < N_Maisons(Auxi) then
+	       
+	       Max := N_Maisons(Auxi) ;
+	    end if;
+	    
+	    
+	 end if;
+	 Auxi := Suiv(Auxi) ;
+      end loop ;
+      return (Max - Nb_Maisons_Propriete(L, C) - 1)  < 2 ;
+   end Moins_De_2_Decart_Vent;
+
+
 end Listes_Proprietes;

@@ -7,6 +7,9 @@ procedure Main is
    Lanc : Un_Lancer; -- variable pour enregistrer le lancer des dés
    Cartes_Chance : File_Cartes;
    Pos_Prec :  Numero_Case ;
+   A : Une_Action ;
+   K : Numero_Case ;
+   B : Boolean ;
    
    
    
@@ -42,23 +45,31 @@ procedure Main is
       end if ;
    end Deshypothequer ;
    
+   procedure Gerer_Hypotheque(N : Un_Num_Joueur ; C : Numero_Case) is
+      
+      L : Liste_Proprietes := Proprietes_Joueur(N) ;
+      
+   begin
+      
+      if not Possede_Propriete(C, L) then
+	 
+	 Put_Line("Vous ne possédez pas cette propriétée") ;
+	 
+      elsif Hypo(L, C) then
+	 
+	 Deshypothequer(N, C) ;
+	 
+      else
+	 Hypothequer(N,C) ;
+	 
+      end if ;
+      
+      end Gerer_Hypotheque ;
+	 
+   
    procedure Construire(N : Un_Num_Joueur ; C : Numero_Case) is
       
-      function Moins_De_2_Decart return Boolean is
-	 L : Liste_Proprietes := Proprietes_Joueur(N) ;
-	 Min : Natural ;
-      begin
-	 Min := 5;
-	 while not Est_Vide(L) loop
-	    if Couleur(Plat(N_Case(L))) = Couleur(Plat(C)) then
-	       if Min > N_Maisons(L) then
-		  Min := N_Maisons(L) ;
-	       end if;
-	    end if;
-	    L := Suiv(L) ;
-	 end loop ;
-	 return (Nb_Maisons_Propriete(Proprietes_Joueur(N), C) + 1) - Min < 2 ;
-      end Moins_De_2_Decart;
+
       
       List : Liste_Proprietes ;
       
@@ -68,7 +79,7 @@ procedure Main is
       if not Possede_Propriete(C, Proprietes_Joueur(N)) then raise Propriete_Non_Possedee ;
       elsif not Couleur_Complete(Proprietes_Joueur(N), Couleur(Plat(C))) then
 	 Put_Line("Vous n'avez pas la collection complete de cette couleur") ;
-      elsif not Moins_De_2_Decart then
+      elsif not Moins_De_2_Decart_Cons(Proprietes_Joueur(N), C) then
 	 Put_Line("Vous ne pouvez pas construire de maison ici avant d'avoir egaliser le nombre de maison sur les rues de cette couleur") ;
       elsif Nb_Maisons_Propriete(Proprietes_Joueur(N), C) = 5 then
 	 Put_Line("Vous avez atteint le nombre de maisons maximal") ;
@@ -84,31 +95,7 @@ procedure Main is
 
    procedure Vendre_Maison(N : Un_Num_Joueur; C : Numero_Case) is
       
-      function Moins_De_2_Decart return Boolean is
-	 
-	 L : Liste_Proprietes := Proprietes_Joueur(N) ;
-	 Max : Natural ;
-	 
-	 
-      begin
-	 
-	 Max := 0;
-	 
-	 
-	 while not Est_Vide(L) loop
-	    if Couleur(Plat(N_Case(L))) = Couleur(Plat(C)) then
-	       
-	       if Max < N_Maisons(L) then
-		  
-		  Max := N_Maisons(L) ;
-	       end if;
-	       
-	       
-	    end if;
-	    L := Suiv(L) ;
-	 end loop ;
-	 return (Max - Nb_Maisons_Propriete(Proprietes_Joueur(N), C) - 1)  < 2 ;
-      end Moins_De_2_Decart;
+
       
       List : Liste_Proprietes ;
       
@@ -118,7 +105,7 @@ procedure Main is
       if not Possede_Propriete(C, Proprietes_Joueur(N)) then raise Propriete_Non_Possedee ;
       elsif not Couleur_Complete(Proprietes_Joueur(N), Couleur(Plat(C))) then
 	 Put_Line("Vous n'avez pas la collection complete de cette couleur") ;
-      elsif not Moins_De_2_Decart then
+      elsif not Moins_De_2_Decart_Vent(Proprietes_Joueur(N), C) then
 	 Put_Line("Vous ne pouvez pas vendre de maison ici avant d'avoir egaliser le nombre de maison sur les rues de cette couleur") ;
       elsif Nb_Maisons_Propriete(Proprietes_Joueur(N), C) = 0 then
 	 Put_Line("Vous n'avez pas de maisons à vendre sur cette propriete");
@@ -372,6 +359,23 @@ procedure Main is
       
    end Tomber_Case ;
    
+   procedure Gerer_Construction(N : Un_Num_Joueur ; C : Numero_Case ; B : Boolean) is 
+      
+   begin
+      
+      if B then 
+	 Construire(N, C) ;
+	 
+      else
+	 Vendre_Maison(N, C) ;
+	 
+      end if ;
+      
+   exception 
+      
+      when Propriete_Non_Possedee => Put_Line("Vous ne possedez pas cette proprietee") ;
+   end Gerer_Construction ;
+   
    
    
 begin
@@ -411,35 +415,43 @@ begin
 	       end if;
             end if;
 	    
-	 else
+	 end if ;
 	    
-	    
-	    --  L := Proprietes_Joueur(N);
-	    --  while not Est_Vide(L) loop
-	    --     C := N_Case(L) ;
-	    --     if Type_Case(Plat(C)) = Rue and then Couleur_Complete(L, Couleur(Plat(C))) then
-	    --  	  Put_Line("Voulez-vous construire une maison à " & Nom_Case(Plat(C)) & " ?");
-	    --  	  if Choix_Binaire then
-	    --  	     Ajouter_Enlever_Maison(True, C, L);
-	    --  	  else
-	    --  	     Put_Line("Voulez-vous détruire une maison à " & Nom_Case(Plat(C)) & " ?");
-	    --  	     if Choix_Binaire then
-	    --  		Ajouter_Enlever_Maison(False, C, L);
-	    --  	     end if;
-	    --  	  end if;
-	    --     end if;
-	    --     L := Suiv(L) ;
-            --  end loop;
-
+	    if not Est_En_Prison(N) then
 	    
 	    Pos_Prec := Position_Joueur(N);
 	    Avancer(N, Lancer.Des);
 	    Argent_Case_Depart(N, Pos_Prec);
 	    
-	    Tomber_Case(N, Position_Joueur(N)) ; 
+	    Tomber_Case(N, Position_Joueur(N)) ;
+	    
+	    A := Hypothequer ;
+	    
+	    while A /= Passer_Tour loop
+	       
+	       Choix_Menu(A, N) ;
+	       if A = Hypothequer then
+		  
+		  Menu_Hypothequer(N, K) ;
+		  Gerer_Hypotheque(N, K) ;
+		  
+	       elsif A = Construire then
+		  
+		  Menu_Construction(N, K, B) ;
+		  Gerer_Construction(N, K, B) ;
+		  
+		  
+		  
+	       end if ;
+	       
+	    end loop ;
+	    
+	    
+	    end if ;
+	    
 	    
 
-	 end if;
+	 
 	 
       end loop;
       
