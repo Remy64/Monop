@@ -44,7 +44,9 @@ package Listes_Proprietes is
    function Case_Presente(L : Liste_Proprietes ; C : Numero_Case) return Boolean;
    
    function Couleur_Complete(L : Liste_Proprietes ; Col : Couleur_Case) return Boolean;
-
+   
+   function Moins_De_2_Decart_Cons(L : Liste_Proprietes; C : Numero_Case) return Boolean ;
+   function Moins_De_2_Decart_Vent(L : Liste_Proprietes; C : Numero_Case) return Boolean ;
 private
    type Cellule;
    type Liste_Proprietes is access Cellule;
