@@ -14,6 +14,23 @@ package body Joueur is
       end loop;
    end Init_Joueurs;
    
+   procedure Init_Truquee is 
+      
+   begin
+      
+      Init_Joueurs ;
+      Ajouter_Propriete_Joueur(1, 40) ;
+      Ajouter_Propriete_Joueur(1, 38) ;
+      Ajouter_Propriete_Joueur(1, 35) ;
+      Ajouter_Propriete_Joueur(1, 33) ;
+      Ajouter_Propriete_Joueur(1, 32) ;
+      Ajouter_Propriete_Joueur(2, 16) ;
+      Ajouter_Propriete_Joueur(2, 26) ;
+      Ajouter_Propriete_Joueur(2, 36) ;
+      Ajouter_Propriete_Joueur(2, 6) ;
+      
+      end Init_Truquee ;
+   
    function Position_Joueur(N : Un_Num_Joueur) return Numero_Case is
    begin
       return Joueurs(N).Position;
@@ -26,15 +43,15 @@ package body Joueur is
    
    procedure Avancer(N : Un_Num_Joueur ; D : Integer) is
    begin
-      if Joueurs(N).Position + D <= 0 then
-	 Joueurs(N).Position := Joueurs(N).Position +D + 40 ;
-      elsif Joueurs(N).Position + D <= 40 then
+      if Joueurs(N).Position + D <= 40 then
 	 Joueurs(N).Position := (Joueurs(N).Position+D) ;
+      elsif Joueurs(N).Position + D <= 0 then
+	 Joueurs(N).Position := Joueurs(N).Position +D + 40 ;
       else
 	 Joueurs(N).Position := (Joueurs(N).Position+D) mod Nb_Rue;
       end if ;
       
-   end Avancer;
+      end Avancer;
    
    function Compte_Joueur(N : Un_Num_Joueur) return Natural is
    begin
@@ -88,7 +105,6 @@ package body Joueur is
    procedure Mettre_En_Prison(N : Un_Num_Joueur) is
    begin
       Joueurs(N).Pris.En_Prison := True;
-      Atteindre_Position(N, 11) ;
    end Mettre_En_Prison;
 
    procedure Sortir_De_Prison(N : Un_Num_Joueur) is

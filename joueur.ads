@@ -17,6 +17,8 @@ package Joueur is
    
    procedure Init_Joueurs; -- place les joueurs sur la case départ dans les conditions d'un début de partie (compte à 1500, pas de propriétés, libre)
    
+   procedure Init_Truquee ;
+   
    function Position_Joueur(N : Un_Num_Joueur) return Numero_Case; -- renvoie la position d'un joueur
    
    procedure Atteindre_Position(N : Un_Num_Joueur ; P : Numero_Case); -- le joueur atteint la case portant le numéro donné en argument

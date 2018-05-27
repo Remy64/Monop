@@ -382,7 +382,7 @@ begin
    
    Init(Cartes_Chance) ;
    Melanger(Cartes_Chance) ;
-   Init_Joueurs;
+   Init_Truquee;
    
    
    while not Fin_Jeu loop
