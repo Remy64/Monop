@@ -1,5 +1,5 @@
-with Ada.Text_IO, Des, Des_Cases, Files_Cartes, Joueur, Listes_Proprietes, Un_Plateau, Interface_Joueur_Machine;
-use Ada.Text_IO, Des, Des_Cases, Files_Cartes, Joueur, Listes_Proprietes, Un_Plateau, Interface_Joueur_Machine;
+with Ada.Text_IO, Des, Des_Cases, Files_Cartes, Joueur, Listes_Proprietes, Un_Plateau, Afficher;
+use Ada.Text_IO, Des, Des_Cases, Files_Cartes, Joueur, Listes_Proprietes, Un_Plateau, Afficher;
 
 procedure Main is
    
@@ -12,16 +12,7 @@ procedure Main is
    B : Boolean ;
    
    
-   
-   
-   procedure Argent_Case_Depart(N : Un_Num_Joueur; Pos_Prec : Numero_Case) is
-   begin
-      if Passe_Depart(Pos_Prec, Position_Joueur(N)) and not Est_En_Prison(N) then -- teste si le joueur est passé par la case départ, s'il est en prison il ne doit pas toucher d'argent
-         Ajouter_Argent(N, 200);
-      end if;
-   end Argent_Case_Depart;
-   
-   procedure Hypothequer(N : Un_Num_Joueur; C : Numero_Case) is
+      procedure Hypothequer(N : Un_Num_Joueur; C : Numero_Case) is
       
    begin
       
@@ -30,18 +21,65 @@ procedure Main is
 	 Hyp(True, N, C) ;
 	 Ajouter_Argent(N, Prix_Terrain(Plat(C))/2);
       end if ;
+      end Hypothequer ;
+   procedure Deficit(N : Un_Num_Joueur ; Du : Natural) is
+      
+      function  Patrimoine return Natural is 
+	 L : Liste_Proprietes ;
+	 Resultat : Natural ;
+      begin
+	 L := Proprietes_Joueur(N) ;
+	 Resultat := 0 ;
+	 while not Est_Vide(L) loop
+	    if not Hypo(L, N_Case(L)) then
+	       Resultat := Resultat + Prix_Terrain(Plat(N_Case(L)))/2 ;
+	    end if ;
+	    L := Suiv(L) ;
+	 end loop ;
+	 return Resultat ;
+      end Patrimoine ;
+      
+      K : Numero_Case ;
+   begin
+      
+      if Compte_Joueur(N) - Du + Patrimoine < 0 then Eliminer(N) ;
+      else
+	 while Compte_Joueur(N) - Du < 0 loop
+	    Hypotheque_Forcee(N, K) ;
+	    if Possede_Propriete(K, Proprietes_Joueur(N)) then
+	       Hypothequer(N, K) ;
+	    end if ;
+	 end loop ;
+	 Ajouter_Argent(N, -Du) ;
+      end if ;
+      
+	 end Deficit ;
+	
+      
+   
+   procedure Argent_Case_Depart(N : Un_Num_Joueur; Pos_Prec : Numero_Case) is
+   begin
+      if Passe_Depart(Pos_Prec, Position_Joueur(N)) and not Est_En_Prison(N) then -- teste si le joueur est passé par la case départ, s'il est en prison il ne doit pas toucher d'argent
+         Ajouter_Argent(N, 200);
+      end if;
+   end Argent_Case_Depart;
+   
+
       
       
-   end Hypothequer ;
+   
    
    procedure Deshypothequer(N : Un_Num_Joueur ; C : Numero_Case) is
       
    begin
       
       if not Possede_Propriete(C, Proprietes_Joueur(N)) then raise Propriete_Non_Possedee ;
+      elsif Compte_Joueur(N) - Integer(Float((Prix_Terrain(Plat(C))/2))*1.1) < 0 then
+	  Pas_Assez ;
+	 null ;
       else
 	 Hyp(False, N, C) ;
-	 Ajouter_Argent(N, Integer(Float((Prix_Terrain(Plat(C))/2))*1.1));
+	 Ajouter_Argent(N, -Integer(Float((Prix_Terrain(Plat(C))/2))*1.1));
       end if ;
    end Deshypothequer ;
    
@@ -53,7 +91,7 @@ procedure Main is
       
       if not Possede_Propriete(C, L) then
 	 
-	 Put_Line("Vous ne possédez pas cette propriétée") ;
+	 Actualiser_Plateau(N);
 	 
       elsif Hypo(L, C) then
 	 
@@ -78,11 +116,16 @@ procedure Main is
 
       if not Possede_Propriete(C, Proprietes_Joueur(N)) then raise Propriete_Non_Possedee ;
       elsif not Couleur_Complete(Proprietes_Joueur(N), Couleur(Plat(C))) then
-	 Put_Line("Vous n'avez pas la collection complete de cette couleur") ;
+	 Actualiser_Plateau(N) ;
       elsif not Moins_De_2_Decart_Cons(Proprietes_Joueur(N), C) then
-	 Put_Line("Vous ne pouvez pas construire de maison ici avant d'avoir egaliser le nombre de maison sur les rues de cette couleur") ;
+	Actualiser_Plateau(N) ;
       elsif Nb_Maisons_Propriete(Proprietes_Joueur(N), C) = 5 then
-	 Put_Line("Vous avez atteint le nombre de maisons maximal") ;
+	 Actualiser_Plateau(N) ;
+      elsif Compte_Joueur(N) -50*((C-1)/10+1) < 0 then
+	 
+	 Pas_Assez ;
+	 
+        
       else
 	 
 	 List := Proprietes_Joueur(N) ;
@@ -104,11 +147,11 @@ procedure Main is
 
       if not Possede_Propriete(C, Proprietes_Joueur(N)) then raise Propriete_Non_Possedee ;
       elsif not Couleur_Complete(Proprietes_Joueur(N), Couleur(Plat(C))) then
-	 Put_Line("Vous n'avez pas la collection complete de cette couleur") ;
+	Actualiser_Plateau(N) ;
       elsif not Moins_De_2_Decart_Vent(Proprietes_Joueur(N), C) then
-	 Put_Line("Vous ne pouvez pas vendre de maison ici avant d'avoir egaliser le nombre de maison sur les rues de cette couleur") ;
+	Actualiser_Plateau(N) ;
       elsif Nb_Maisons_Propriete(Proprietes_Joueur(N), C) = 0 then
-	 Put_Line("Vous n'avez pas de maisons à vendre sur cette propriete");
+	Actualiser_Plateau(N) ;
       else
 	 
 	 List := Proprietes_Joueur(N) ;
@@ -136,6 +179,7 @@ procedure Main is
 	 Retirer_Carte_Lib(N);
       else
 	 Mettre_En_Prison(N);
+	 Atteindre_Position(N, 11) ;
       end if;
    end Case_Est_Prison;
    
@@ -148,20 +192,30 @@ procedure Main is
       Put_Line("Proprietaire Case : "&Natural'Image(Proprio)) ;
       if Proprio = 0 then -- cas où le terrain n'appartient à personne
 	 
-	 Put("Voulez-vous acheter " & Nom_Case(Plat(C)) & ", joueur " & Integer'Image(N) & " ?  o/n");
 	 
-         if Choix_Binaire then
+	 
+         if Choix_Binaire("Acheter"&Nom_Case(Plat(C))&" ?") then
+	    if Compte_Joueur(N) - Prix_Terrain(Plat(C)) < 0 then 
+	       Pas_Assez ;
+	    else
+	       
 	    Ajouter_Argent(N, -Prix_Terrain(Plat(C))); -- retire le montant de l'achat du compte du joueur
 	    
 	    Ajouter_Propriete_Joueur(N, C); -- ajoute une propriété à la liste des propriétés du joueur ciblé
-	 else
-	    Put("Il faut prendre des risques en affaires ! Demandez conseil à Antoine et montez votre start-up !");
+	    end if ;
+	    
          end if;
 	 
       elsif Proprio /= N then -- cas où le terrain appartient à un autre joueur
 	 Montant := Loyer(Plat(C), Nb_Maisons_Propriete(Proprietes_Joueur(Proprio), C));
 	 Put("Vous devez payer un loyer de " & Integer'Image(Montant) & " au joueur " & Integer'Image(Proprio));
-	 Ajouter_Argent(N, -Montant);
+	 
+	 begin
+	    Ajouter_Argent(N, -Montant);
+	 exception 
+	    when Compte_Vide => Deficit(N, Montant) ;
+	 end ;
+	 
 	 Ajouter_Argent(Proprio, Montant); 
 	 
       else -- cas où le joueur possède le terrain
@@ -180,14 +234,18 @@ procedure Main is
       Proprio := Proprietaire_Case(C);
       if Proprio = 0 then -- cas où le terrain n'appartient à personne
 	 
-	 Put("Voulez-vous acheter " & Nom_Case(Plat(C)) & ", joueur " & Integer'Image(N) & " ?  o/n");
+        
 	 
-         if Choix_Binaire then
-	    Ajouter_Argent(N, -Prix_Terrain(Plat(C))); -- retire le montant de l'achat du compte du joueur
+         if Choix_Binaire("Acheter"&Nom_Case(Plat(C))&" ?") then
 	    
-	    Ajouter_Propriete_Joueur(N, C);
-	 else
-	    Put("Il faut prendre des risques en affaires ! Demandez conseil à Antoine et montez votre start-up !");
+	    if Compte_Joueur(N) - Prix_Terrain(Plat(C)) < 0 then
+	       Pas_Assez ;
+	    else
+	       Ajouter_Argent(N, -Prix_Terrain(Plat(C))); -- retire le montant de l'achat du compte du joueur
+	       
+	       Ajouter_Propriete_Joueur(N, C);
+	    end if ;
+        
          end if;
 	 
       elsif Proprio /= N then -- cas où le terrain appartient à un autre joueur
@@ -198,8 +256,12 @@ procedure Main is
 	    Montant := Lanc.Des*10;
 	 end if ;
 	 
-	 Put("Vous devez payer un loyer de " & Integer'Image(Montant) & " au joueur " & Integer'Image(Proprio));
-	 Ajouter_Argent(N, -Montant);
+	 
+	 begin
+	    Ajouter_Argent(N, -Montant);
+	 exception 
+	    when Compte_Vide => Deficit(N, Montant) ;
+	 end ;
 	 Ajouter_Argent(Proprio, Montant);
 	 
       end if ;
@@ -215,21 +277,28 @@ procedure Main is
       Proprio := Proprietaire_Case(C);
       if Proprio = 0 then -- cas où le terrain n'appartient à personne
 	 
-	 Put("Voulez-vous acheter " & Nom_Case(Plat(C)) & ", joueur " & Integer'Image(N) & " ?  o/n");
 	 
-         if Choix_Binaire then
+	 
+         if Choix_Binaire("Acheter"&Nom_Case(Plat(C))&" ?") then
+	    if Compte_Joueur(N) - Prix_Terrain(Plat(C)) < 0 then
+	       Pas_Assez ;
+	       else
 	    Ajouter_Argent(N, -Prix_Terrain(Plat(C))); -- retire le montant de l'achat du compte du joueur
 	    Ajouter_Propriete_Joueur(N, C); -- ajoute une propriété à la liste des propriétés du joueur ciblé
-	 else
-	    Put("Il faut prendre des risques en affaires ! Demandez conseil à Antoine et montez votre start-up !");
+	    end if ;
+        
          end if;
 	 
       elsif Proprio /= N then -- cas où le terrain appartient à un autre joueur
 	 
 	 Montant := 25 *(2**(Nb_Gares(Proprietes_Joueur(Proprio))-1)) ;
 	 
-	 Put("Vous devez payer un loyer de " & Integer'Image(Montant) & " au joueur " & Integer'Image(Proprio));
-	 Ajouter_Argent(N, -Montant);
+	 
+	 begin
+	    Ajouter_Argent(N, -Montant);
+	 exception 
+	    when Compte_Vide => Deficit(N, Montant) ;
+	 end ;
 	 Ajouter_Argent(Proprio, Montant);
       end if ;
    end Case_Est_Gare ;
@@ -238,8 +307,11 @@ procedure Main is
       
    begin
       
-      Put_Line("Vous devez payer une taxe de"&Natural'Image(Prix_Terrain(Plat(C)))) ;
+      
       Ajouter_Argent(N, -Prix_Terrain(Plat(C))) ;
+      
+   exception
+      when Compte_Vide => Deficit(N, Prix_Terrain(Plat(C))) ;
       
    end Case_Est_Taxe ;
    
@@ -318,9 +390,8 @@ procedure Main is
    begin
       
       Tourner(Cartes_Chance, Ca) ;
-      Put_Line(Titre_Carte(Ca)) ;
-      Put_Line(Description_Carte(Ca)) ;
-      
+      Afficher_Texte(Cote_Plat+20, Cote_Plat/2, Titre_Carte(Ca)&Character'Val(10)&Description_Carte(Ca)) ;
+      delay 5.0 ;
       case Effet_Carte(Ca) is 
 	 when Argent => Carte_Argent(Ca, N);
 	 when Prison => Case_Est_Prison(N); -- c'est la même procédure donc je la réutilise
@@ -383,15 +454,22 @@ begin
    Init(Cartes_Chance) ;
    Melanger(Cartes_Chance) ;
    Init_Truquee;
+   Init_Plateau ;
+   
    
    
    while not Fin_Jeu loop
       
       for N in Un_Num_Joueur loop
 	 
-	 Lanc := Lancer;
-	 New_Line ;	 
-	 Afficher_Infos_Joueur(N);
+	 if not Elimine(N) then
+	 
+	
+	 	 
+	 Actualiser_Plateau(N) ;
+	 if 1< Lanc.Des and Lanc.Des < 13 then
+	    Lancer_De_De(Lanc) ;
+	    end if ;
 	 
 	 if Trois_Tours(N) then -- on vérifie que le joueur n'a pas passé 3 tours en prison, sinon on le sort de prison
 	    Sortir_De_Prison(N);
@@ -401,8 +479,8 @@ begin
 	 
 	 if Est_En_Prison(N) then
 	    
-	    Put("Voulez-vous payer 50€ pour sortir de prison ? o/n");
-            if Choix_Binaire then -- le joueur paie et sort de prison
+	    
+            if Choix_Binaire("Voulez-vous payer 50€ pour sortir de prison ? o/n") then -- le joueur paie et sort de prison
 	       Ajouter_Argent(N, -50);
 	       Sortir_De_Prison(N);
 	       RAZ_Tour_Prison(N);
@@ -417,17 +495,10 @@ begin
 	    
 	 end if ;
 	    
-	    if not Est_En_Prison(N) then
-	    
-	    Pos_Prec := Position_Joueur(N);
-	    Avancer(N, Lancer.Des);
-	    Argent_Case_Depart(N, Pos_Prec);
-	    
-	    Tomber_Case(N, Position_Joueur(N)) ;
+	 if not Est_En_Prison(N) then
 	    
 	    A := Hypothequer ;
-	    
-	    while A /= Passer_Tour loop
+	     while A /= Passer_Tour loop
 	       
 	       Choix_Menu(A, N) ;
 	       if A = Hypothequer then
@@ -445,16 +516,33 @@ begin
 	       end if ;
 	       
 	    end loop ;
+	    Lanc := Lancer;
+	    Pos_Prec := Position_Joueur(N);
+	    Avancer(N, Lanc.Des);
+	    Argent_Case_Depart(N, Pos_Prec);
+	   
+	    
+	    Actualiser_Plateau(N) ;
+	    Lancer_De_De(Lanc) ;
+	     
+	    
+	    Tomber_Case(N, Position_Joueur(N)) ;
+	  
+	    
+	    
+	    
+	   
 	    
 	    
 	    end if ;
 	    
 	    
 
-	 
+	 end if ;
 	 
       end loop;
       
    end loop;
    
+   Afficher_Gagnant(Gagnant) ;
 end Main;
