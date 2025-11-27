@@ -1,3 +1,2 @@
 # Monop
-Voilà.
-Voilà.
+Un jeu de Monopoly écrit en Ada.
